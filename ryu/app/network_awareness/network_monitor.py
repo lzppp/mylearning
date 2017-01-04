@@ -80,7 +80,8 @@ class NetworkMonitor(app_manager.RyuApp):
         """
             Main entry method of monitoring traffic.
         """
-        while CONF.weight == 'bw':
+        #while CONF.weight == 'bw':
+        while True:
             self.stats['flow'] = {}
             self.stats['port'] = {}
             for dp in self.datapaths.values():
@@ -92,6 +93,7 @@ class NetworkMonitor(app_manager.RyuApp):
             hub.sleep(setting.MONITOR_PERIOD)
             if self.stats['flow'] or self.stats['port']:
                 self.show_stat('flow')
+                #i dont want port info
                 self.show_stat('port')
                 hub.sleep(1)
 
@@ -242,9 +244,13 @@ class NetworkMonitor(app_manager.RyuApp):
         self.flow_speed.setdefault(dpid, {})
         for stat in sorted([flow for flow in body if flow.priority == 1],
                            key=lambda flow: (flow.match.get('in_port'),
-                                             flow.match.get('ipv4_dst'))):
+                                             flow.match.get('ipv4_dst'),
+                                             flow.match.get('ipv4_src')
+                                             )):
             key = (stat.match['in_port'],  stat.match.get('ipv4_dst'),
-                   stat.instructions[0].actions[0].port)
+                   stat.match.get('ipv4_src'),
+                   stat.instructions[0].actions[0].port,
+                   )
             value = (stat.packet_count, stat.byte_count,
                      stat.duration_sec, stat.duration_nsec)
             self._save_stats(self.flow_stats[dpid], key, value, 5)
@@ -362,7 +368,18 @@ class NetworkMonitor(app_manager.RyuApp):
             print "switch%d: port %s %s" % (dpid, reason_dict[reason], port_no)
         else:
             print "switch%d: Illeagal port state %s %s" % (port_no, reason)
-
+    def saving_bw(dpid,):
+        '''
+            save the info about bw according to data type
+            type: only 'flow' now
+        '''
+        if (type == 'flow'):
+            print ("saving the flow TBD")
+            '''
+                find where datapath = 'sw1' and port = out-port 
+                change it's bw info
+            '''
+            
     def show_stat(self, type):
         '''
             Show statistics info according to data type.
@@ -373,24 +390,28 @@ class NetworkMonitor(app_manager.RyuApp):
 
         bodys = self.stats[type]
         if(type == 'flow'):
-            print('datapath         ''   in-port        ip-dst      '
+            print('datapath         ''   in-port        ip-dst        ip-src        '
                   'out-port packets  bytes  flow-speed(B/s)')
-            print('---------------- ''  -------- ----------------- '
+            print('---------------- ''  -------- ----------------- ----------------- '
                   '-------- -------- -------- -----------')
             for dpid in bodys.keys():
                 for stat in sorted(
                     [flow for flow in bodys[dpid] if flow.priority == 1],
                     key=lambda flow: (flow.match.get('in_port'),
-                                      flow.match.get('ipv4_dst'))):
-                    print('%016x %8x %17s %8x %8d %8d %8.1f' % (
+                                      flow.match.get('ipv4_dst'),
+                                      flow.match.get('ipv4_src'))):
+                    print('%016x %8x %17s %17s %8x %8d %8d %8.1f ' % (
                         dpid,
-                        stat.match['in_port'], stat.match['ipv4_dst'],
+                        stat.match['in_port'], stat.match['ipv4_dst'],stat.match['ipv4_src'],
                         stat.instructions[0].actions[0].port,
                         stat.packet_count, stat.byte_count,
                         abs(self.flow_speed[dpid][
                             (stat.match.get('in_port'),
                             stat.match.get('ipv4_dst'),
-                            stat.instructions[0].actions[0].port)][-1])))
+                            stat.match.get('ipv4_src'),
+                            stat.instructions[0].actions[0].port)][-1]))
+                        )
+                   
             print '\n'
 
         if(type == 'port'):

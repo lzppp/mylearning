@@ -18,6 +18,7 @@
 import logging
 import struct
 import networkx as nx
+import netaddr
 from operator import attrgetter
 from ryu import cfg
 from ryu.base import app_manager
@@ -32,8 +33,7 @@ from ryu.lib.packet import ipv4
 from ryu.lib.packet import arp
 
 from ryu.topology import event, switches
-from ryu.topology.api import get_switch, get_link
-
+from ryu.topology.api import get_switch, get_link 
 import network_awareness
 import network_monitor
 import network_delay_detector
@@ -157,6 +157,11 @@ class ShortestForwarding(app_manager.RyuApp):
             Get access port if dst host.
             access_table: {(sw,port) :(ip, mac)}
         """
+        '''
+            ???
+        '''
+        if dst_ip != None and netaddr.IPAddress(dst_ip) not in netaddr.IPNetwork("10.0.0.0/8"):
+            dst_ip = "10.0.0.5"
         if access_table:
             if isinstance(access_table.values()[0], tuple):
                 for key in access_table.keys():

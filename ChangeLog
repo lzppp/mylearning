@@ -1,6 +1,9 @@
 CHANGES
 =======
 
+* fix erro typing in log info
+* update README for delay detector
+* fixed delay detector error
 * add Class docs and comments
 * add Class docs and comments
 * get echo delay before it was used

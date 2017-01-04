@@ -19,6 +19,7 @@ import logging
 import struct
 import copy
 import networkx as nx
+import netaddr
 from operator import attrgetter
 from ryu import cfg
 from ryu.base import app_manager
@@ -114,6 +115,14 @@ class NetworkAwareness(app_manager.RyuApp):
         """
             Get host location info:(datapath, port) according to host ip.
         """
+        if host_ip != None and netaddr.IPAddress(host_ip) not in netaddr.IPNetwork("10.0.0.0/8"):
+            host_ip = "10.0.0.5"
+        '''
+        /\
+        |
+        |
+        NAT to 10.0.0.5
+        '''
         for key in self.access_table.keys():
             if self.access_table[key][0] == host_ip:
                 return key
@@ -182,7 +191,7 @@ class NetworkAwareness(app_manager.RyuApp):
         """
             Great K shortest paths of src to dst.
         """
-        generator = nx.shortest_simple_paths(graph, source=src,
+        generator = nx.all_shortest_paths(graph, source=src,
                                              target=dst, weight=weight)
         shortest_paths = []
         try:
@@ -273,7 +282,14 @@ class NetworkAwareness(app_manager.RyuApp):
 
             # Record the access info
             self.register_access_info(datapath.id, in_port, arp_src_ip, mac)
-
+    def saving_link(self , switch1 , switch2 , link):
+        '''
+            save the link init info
+            as switch1 port1 switch2 port2
+            switch* and port* can be a primary key
+        '''
+        print("TBD")
+        
     def show_topology(self):
         switch_num = len(self.graph.nodes())
         if self.pre_graph != self.graph and setting.TOSHOW:
@@ -289,7 +305,7 @@ class NetworkAwareness(app_manager.RyuApp):
                 print ""
             self.pre_graph = copy.deepcopy(self.graph)
 
-        if self.pre_link_to_port != self.link_to_port and setting.TOSHOW:
+        if setting.TOSHOW:#self.pre_link_to_port != self.link_to_port and setting.TOSHOW:
             print "---------------------Link Port---------------------"
             print '%10s' % ("switch"),
             for i in self.graph.nodes():
@@ -299,7 +315,8 @@ class NetworkAwareness(app_manager.RyuApp):
                 print '%10d' % i,
                 for j in self.graph.nodes():
                     if (i, j) in self.link_to_port.keys():
-                        print '%10s' % str(self.link_to_port[(i, j)]),
+                        print '%10s' % str(self.link_to_port[(i, j)])
+                        self.saving_link(i,j,self.link_to_port[(i, j)])
                     else:
                         print '%10s' % "No-link",
                 print ""
