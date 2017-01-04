@@ -291,9 +291,11 @@ class NetworkAwareness(app_manager.RyuApp):
             as switch1 port1 switch2 port2
             switch* and port* can be a primary key
         '''
-        savesql = '''INSERT INTO switch (sw1 , po1 , sw2 , po2) values (?, ?, ?, ?)'''
-        data = [switch1 , link[0] , switch2 ,link[1]]
-        sql.save(self.conn , savesql , data)
+        print link
+        print type(link)
+        #savesql = '''INSERT INTO switch (sw1 , po1 , sw2 , po2) values (?, ?, ?, ?)'''
+        #data = [switch1 , link[0] , switch2 ,link[1]]
+        #sql.save(self.conn , savesql , data)
         print("TBD")
         
     def show_topology(self):
