@@ -74,7 +74,8 @@ class NetworkDelayDetector(app_manager.RyuApp):
             Delay detecting functon.
             Send echo request and calculate link delay periodically
         """
-        while CONF.weight == 'delay':
+        #while CONF.weight == 'delay':
+        while True:
             self._send_echo_request()
             self.create_link_delay()
             try:
@@ -150,7 +151,7 @@ class NetworkDelayDetector(app_manager.RyuApp):
             saving the delay info to the sqlite 
         """
         saving_sql = 'UPDATE switch SET delay = ? WHERE sw1 = ? AND sw2 = ?'
-        data = (str(delay) , str(src) , str(dst))
+        data = [(str(delay) , str(src) , str(dst))]
         sql.update(self.conn , saving_sql , data)
 
     def create_link_delay(self):
@@ -165,7 +166,7 @@ class NetworkDelayDetector(app_manager.RyuApp):
                         continue
                     delay = self.get_delay(src, dst)
                     self.awareness.graph[src][dst]['delay'] = delay
-                    saving_delay()
+                    self.saving_delay(src ,dst ,delay)
         except:
             if self.awareness is None:
                 self.awareness = lookup_service_brick('awareness')

@@ -379,8 +379,9 @@ class NetworkMonitor(app_manager.RyuApp):
             finding flow using dpid and out-port in flow_sql table
         """
         update_sql = 'UPDATE switch SET bw = ? WHERE sw1 = ? AND po1 = ?'
-        data = (str(bw) , str(dpid) , out_port)
-        update(conn, update_sql, data)
+        data = [(str(bw) , str(dpid) , out_port)]
+        print data
+        sql.update(self.conn, update_sql, data)
 
     def update_bw():
         print "TBD"
@@ -441,5 +442,6 @@ class NetworkMonitor(app_manager.RyuApp):
                             self.port_features[dpid][stat.port_no][2],
                             self.port_features[dpid][stat.port_no][0],
                             self.port_features[dpid][stat.port_no][1]))
-                        saving_bw(dpid , stat.port_no , abs(self.port_speed[(dpid, stat.port_no)][-1])/1024)
+                        abw = abs(self.port_speed[(dpid, stat.port_no)][-1]) / 1024
+                        self.saving_bw(dpid , stat.port_no , abw)
             print '\n'
