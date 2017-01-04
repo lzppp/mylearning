@@ -288,6 +288,7 @@ class NetworkAwareness(app_manager.RyuApp):
             as switch1 port1 switch2 port2
             switch* and port* can be a primary key
         '''
+        
         print("TBD")
         
     def show_topology(self):
