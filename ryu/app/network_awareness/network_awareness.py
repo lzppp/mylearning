@@ -293,7 +293,7 @@ class NetworkAwareness(app_manager.RyuApp):
         '''
         #print link
         savesql = '''INSERT INTO switch (sw1 , po1 , sw2 , po2) values (?, ?, ?, ?)'''
-        data = [str(switch1) , link[0] , str(switch2) ,link[1]]
+        data = [(str(switch1) , link[0] , str(switch2) ,link[1])]
         sql.save(self.conn , savesql , data)
         print("TBD")
         

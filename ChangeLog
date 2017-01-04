@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+* ignore file add
+* test sqlite0.2
+* test sqlite
+* before add sql
+* Update README.rst
 * fix erro typing in log info
 * update README for delay detector
 * fixed delay detector error
