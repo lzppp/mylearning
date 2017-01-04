@@ -81,7 +81,7 @@ class ShortestForwarding(app_manager.RyuApp):
         self.weight = self.WEIGHT_MODEL[CONF.weight]
 
         self.conn = sql.get_conn(GPATH)
-        sql.drop_table(self.conn , switch)
+        sql.drop_table(self.conn , 'switch')
         sql.create_table(self.conn , TABLESQL)
 
     def set_weight_mode(self, weight):
