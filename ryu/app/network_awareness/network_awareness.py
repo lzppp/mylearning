@@ -37,9 +37,11 @@ from ryu.lib import hub
 from ryu.topology import event, switches
 from ryu.topology.api import get_switch, get_link
 import setting
-
+import sql
+import
 
 CONF = cfg.CONF
+GPATH = './switchinfo.db'
 
 
 class NetworkAwareness(app_manager.RyuApp):
@@ -67,6 +69,8 @@ class NetworkAwareness(app_manager.RyuApp):
         self.pre_access_table = {}
         self.pre_link_to_port = {}
         self.shortest_paths = None
+
+        self.conn = sql.get_conn(GPATH)
 
         # Start a green thread to discover network resource.
         self.discover_thread = hub.spawn(self._discover)
@@ -288,7 +292,9 @@ class NetworkAwareness(app_manager.RyuApp):
             as switch1 port1 switch2 port2
             switch* and port* can be a primary key
         '''
-        
+        savesql = '''INSERT INTO switch (sw1 , po1 , sw2 , po2) values (?, ?, ?, ?)'''
+        data = [switch1 , link[0] , switch2 ,link[1]]
+        sql.save(self.conn , savesql , data)
         print("TBD")
         
     def show_topology(self):

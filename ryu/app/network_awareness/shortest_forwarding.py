@@ -33,13 +33,25 @@ from ryu.lib.packet import ipv4
 from ryu.lib.packet import arp
 
 from ryu.topology import event, switches
-from ryu.topology.api import get_switch, get_link 
+from ryu.topology.api import get_switch, get_link
 import network_awareness
 import network_monitor
 import network_delay_detector
+import sql
 
 
 CONF = cfg.CONF
+GPATH = './switchinfo.db'
+TABLESQL = '''CREATE TABLE `switch` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `sw1` varchar(20) NOT NULL,
+                `po1` int(11) NOT NULL,
+                `sw2` varchar(20) NOT NULL,
+                `po2` int(11) NOT NULL,
+                `delay` varchar(20) DEFAULT NULL,
+                `bw_between` varchar(20) DEFAULT NULL,
+                `qoe` varchar(20) DEFAULT NULL
+            )'''
 
 
 class ShortestForwarding(app_manager.RyuApp):
@@ -67,6 +79,10 @@ class ShortestForwarding(app_manager.RyuApp):
         self.delay_detector = kwargs["network_delay_detector"]
         self.datapaths = {}
         self.weight = self.WEIGHT_MODEL[CONF.weight]
+
+        self.conn = sql.get_conn(GPATH)
+        sql.drop_table(self.conn , switch)
+        sql.create_table(self.conn , TABLESQL)
 
     def set_weight_mode(self, weight):
         """
@@ -296,11 +312,11 @@ class ShortestForwarding(app_manager.RyuApp):
 
         # inter_link
         if len(path) > 2:
-            for i in xrange(1, len(path)-1):
+            for i in xrange(1, len(path) - 1):
                 port = self.get_port_pair_from_link(link_to_port,
-                                                    path[i-1], path[i])
+                                                    path[i - 1], path[i])
                 port_next = self.get_port_pair_from_link(link_to_port,
-                                                         path[i], path[i+1])
+                                                         path[i], path[i + 1])
                 if port and port_next:
                     src_port, dst_port = port[1], port_next[0]
                     datapath = datapaths[path[i]]

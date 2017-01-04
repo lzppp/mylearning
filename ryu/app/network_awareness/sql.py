@@ -232,13 +232,12 @@ def create_table_test():
     '''创建数据库表测试'''
     print('创建数据库表测试...')
     create_table_sql = '''CREATE TABLE `student` (
-                          `id` int(11) NOT NULL,
+                          `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                           `name` varchar(20) NOT NULL,
                           `gender` varchar(4) DEFAULT NULL,
                           `age` int(11) DEFAULT NULL,
                           `address` varchar(200) DEFAULT NULL,
-                          `phone` varchar(20) DEFAULT NULL,
-                           PRIMARY KEY (`id`)
+                          `phone` varchar(20) DEFAULT NULL
                         )'''
     conn = get_conn(DB_FILE_PATH)
     create_table(conn, create_table_sql)
@@ -247,11 +246,11 @@ def create_table_test():
 def save_test():
     '''保存数据测试...'''
     print('保存数据测试...')
-    save_sql = '''INSERT INTO student values (?, ?, ?, ?, ?, ?)'''
-    data = [(1, 'Hongten', '男', 20, '广东省广州市', '13423****62'),
-            (2, 'Tom', '男', 22, '美国旧金山', '15423****63'),
-            (3, 'Jake', '女', 18, '广东省广州市', '18823****87'),
-            (4, 'Cate', '女', 21, '广东省广州市', '14323****32')]
+    save_sql = '''INSERT INTO student (name , gender ,age,address ,phone) values (?, ?, ?, ?, ?)'''
+    data = [( 'Hongten', '男', 20, '广东省广州市', '13423****62'),
+            ('Tom', '男', 22, '美国旧金山', '15423****63'),
+            ('Jake', '女', 18, '广东省广州市', '18823****87'),
+            ('Cate', '女', 21, '广东省广州市', '14323****32')]
     conn = get_conn(DB_FILE_PATH)
     save(conn, save_sql, data)
 
