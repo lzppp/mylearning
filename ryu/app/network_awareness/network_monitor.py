@@ -28,9 +28,10 @@ from ryu.ofproto import ofproto_v1_3
 from ryu.lib import hub
 from ryu.lib.packet import packet
 import setting
-
+import sql
 
 CONF = cfg.CONF
+GPATH = './switchinfo.db'
 
 
 class NetworkMonitor(app_manager.RyuApp):
@@ -59,6 +60,7 @@ class NetworkMonitor(app_manager.RyuApp):
         # free bandwidth of links respectively.
         self.monitor_thread = hub.spawn(self._monitor)
         self.save_freebandwidth_thread = hub.spawn(self._save_bw_graph)
+        self.conn = sql.get_conn(GPATH)
 
     @set_ev_cls(ofp_event.EventOFPStateChange,
                 [MAIN_DISPATCHER, DEAD_DISPATCHER])
@@ -368,17 +370,21 @@ class NetworkMonitor(app_manager.RyuApp):
             print "switch%d: port %s %s" % (dpid, reason_dict[reason], port_no)
         else:
             print "switch%d: Illeagal port state %s %s" % (port_no, reason)
-    def saving_bw(dpid,):
+    def saving_bw(self , dpid , out_port , bw):
         '''
             save the info about bw according to data type
             type: only 'flow' now
         '''
-        if (type == 'flow'):
-            print ("saving the flow TBD")
-            '''
-                find where datapath = 'sw1' and port = out-port 
-                change it's bw info
-            '''
+        """
+            finding flow using dpid and out-port in flow_sql table
+        """
+        update_sql = 'UPDATE switch SET bw = ? WHERE sw1 = ? AND po1 = ?'
+        data = (str(bw) , str(dpid) , out_port)
+        update(conn, update_sql, data)
+
+    def update_bw():
+        print "TBD"
+
             
     def show_stat(self, type):
         '''
@@ -411,7 +417,7 @@ class NetworkMonitor(app_manager.RyuApp):
                             stat.match.get('ipv4_src'),
                             stat.instructions[0].actions[0].port)][-1]))
                         )
-                   
+                         
             print '\n'
 
         if(type == 'port'):
@@ -435,4 +441,5 @@ class NetworkMonitor(app_manager.RyuApp):
                             self.port_features[dpid][stat.port_no][2],
                             self.port_features[dpid][stat.port_no][0],
                             self.port_features[dpid][stat.port_no][1]))
+                        saving_bw(dpid , stat.port_no , abs(self.port_speed[(dpid, stat.port_no)][-1])/1024)
             print '\n'

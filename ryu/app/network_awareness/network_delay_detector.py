@@ -28,9 +28,10 @@ from ryu.topology.switches import LLDPPacket
 import networkx as nx
 import time
 import setting
-
+import sql
 
 CONF = cfg.CONF
+GPATH = './switchinfo.db'
 
 
 class NetworkDelayDetector(app_manager.RyuApp):
@@ -52,6 +53,8 @@ class NetworkDelayDetector(app_manager.RyuApp):
         self.datapaths = {}
         self.echo_latency = {}
         self.measure_thread = hub.spawn(self._detector)
+
+        self.conn = sql.get_conn(GPATH)
 
     @set_ev_cls(ofp_event.EventOFPStateChange,
                 [MAIN_DISPATCHER, DEAD_DISPATCHER])
@@ -142,6 +145,13 @@ class NetworkDelayDetector(app_manager.RyuApp):
             if self.awareness is None:
                 self.awareness = lookup_service_brick('awareness')
             return
+    def saving_delay(self ,src , dst ,delay):
+        """
+            saving the delay info to the sqlite 
+        """
+        saving_sql = 'UPDATE switch SET delay = ? WHERE sw1 = ? AND sw2 = ?'
+        data = (str(delay) , str(src) , str(dst))
+        sql.update(self.conn , saving_sql , data)
 
     def create_link_delay(self):
         """
@@ -155,6 +165,7 @@ class NetworkDelayDetector(app_manager.RyuApp):
                         continue
                     delay = self.get_delay(src, dst)
                     self.awareness.graph[src][dst]['delay'] = delay
+                    saving_delay()
         except:
             if self.awareness is None:
                 self.awareness = lookup_service_brick('awareness')

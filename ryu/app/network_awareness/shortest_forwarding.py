@@ -42,17 +42,27 @@ import sql
 
 CONF = cfg.CONF
 GPATH = './switchinfo.db'
-TABLESQL = '''CREATE TABLE `switch` (
+TABLESWITCH = '''CREATE TABLE `switch` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                 `sw1` varchar(20) NOT NULL,
                 `po1` int(11) NOT NULL,
                 `sw2` varchar(20) NOT NULL,
                 `po2` int(11) NOT NULL,
                 `delay` varchar(20) DEFAULT NULL,
-                `bw_between` varchar(20) DEFAULT NULL,
+                `bw` varchar(20) DEFAULT NULL,
                 `qoe` varchar(20) DEFAULT NULL
             )'''
 
+TABLEFLOW = '''CREATE TABLE `flow` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `ip_dst` varchar(20) NOT NULL,
+                `ip_src` archar(20) NOT NULL,
+                `sw2` varchar(20) NOT NULL,
+                `po2` int(11) NOT NULL,
+                `delay` varchar(20) DEFAULT NULL,
+                `bw` varchar(20) DEFAULT NULL,
+                `qoe` varchar(20) DEFAULT NULL
+            )'''
 
 class ShortestForwarding(app_manager.RyuApp):
     """
@@ -82,7 +92,7 @@ class ShortestForwarding(app_manager.RyuApp):
 
         self.conn = sql.get_conn(GPATH)
         sql.drop_table(self.conn , 'switch')
-        sql.create_table(self.conn , TABLESQL)
+        sql.create_table(self.conn , TABLESWITCH)
 
     def set_weight_mode(self, weight):
         """
