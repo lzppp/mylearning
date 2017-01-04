@@ -38,7 +38,6 @@ from ryu.topology import event, switches
 from ryu.topology.api import get_switch, get_link
 import setting
 import sql
-import
 
 CONF = cfg.CONF
 GPATH = './switchinfo.db'
