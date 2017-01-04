@@ -62,6 +62,7 @@ def get_conn(path):
     路径下的数据库文件的连接对象；否则，返回内存中的数据接
     连接对象'''
     conn = sqlite3.connect(path)
+    conn.text_factory = str
     if os.path.exists(path) and os.path.isfile(path):
         print('硬盘上面:[{}]'.format(path))
         return conn
