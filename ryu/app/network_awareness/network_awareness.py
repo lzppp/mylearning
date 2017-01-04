@@ -312,7 +312,7 @@ class NetworkAwareness(app_manager.RyuApp):
                 print ""
             self.pre_graph = copy.deepcopy(self.graph)
 
-        if setting.TOSHOW:#self.pre_link_to_port != self.link_to_port and setting.TOSHOW:
+        if self.pre_link_to_port != self.link_to_port and setting.TOSHOW:
             print "---------------------Link Port---------------------"
             print '%10s' % ("switch"),
             for i in self.graph.nodes():
