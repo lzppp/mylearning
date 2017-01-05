@@ -255,7 +255,17 @@ class ShortestForwarding(app_manager.RyuApp):
         graph = self.awareness.graph
 
         if weight == self.WEIGHT_MODEL['hop']:
-            return shortest_paths.get(src).get(dst)[0]
+            try:
+                paths = shortest_paths.get(src).get(dst)
+                return paths[0]
+            except:
+                paths = self.awareness.k_shortest_paths(graph, src, dst,
+
+                                                        weight=weight)
+
+                shortest_paths.setdefault(src, {})
+                shortest_paths[src].setdefault(dst, paths)
+                return paths[0]
         elif weight == self.WEIGHT_MODEL['delay']:
             # If paths existed, return it, else calculate it and save it.
             try:
