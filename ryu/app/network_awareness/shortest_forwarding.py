@@ -53,16 +53,6 @@ TABLESWITCH = '''CREATE TABLE `switch` (
                 `qoe` varchar(20) DEFAULT NULL
             )'''
 
-TABLEFLOW = '''CREATE TABLE `flow` (
-                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-                `ip_dst` varchar(20) NOT NULL,
-                `ip_src` archar(20) NOT NULL,
-                `sw2` varchar(20) NOT NULL,
-                `po2` int(11) NOT NULL,
-                `delay` varchar(20) DEFAULT NULL,
-                `bw` varchar(20) DEFAULT NULL,
-                `qoe` varchar(20) DEFAULT NULL
-            )'''
 
 class ShortestForwarding(app_manager.RyuApp):
     """
