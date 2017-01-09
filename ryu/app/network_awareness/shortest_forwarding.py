@@ -439,8 +439,8 @@ class ShortestForwarding(app_manager.RyuApp):
                 _sql = '''INSERT INTO flow (ip_src ,ip_dst , path) values (?, ? , ?)'''
                 data = (str(src) ,str (dst) , str(path))
                 sql.save(self.flowconn , _sql , data)
-
-        print "TBD"
+        except:
+            print "TBD"
 
 
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
