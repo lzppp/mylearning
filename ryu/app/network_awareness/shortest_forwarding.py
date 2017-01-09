@@ -91,8 +91,8 @@ class ShortestForwarding(app_manager.RyuApp):
         self.flowconn = sql.get_conn(FPATH)
         sql.drop_table(self.conn , 'switch')
         sql.create_table(self.conn , TABLESWITCH)
-        sql.drop_table(self.conn , 'flow')
-        sql.create_table(self.conn , TABLEFLOW)
+        sql.drop_table(self.flowconn , 'flow')
+        sql.create_table(self.flowconn , TABLEFLOW)
 
     def set_weight_mode(self, weight):
         """
@@ -433,7 +433,7 @@ class ShortestForwarding(app_manager.RyuApp):
                 #update
                 _sql = 'UPDATE flow SET path = ? WHERE ip_src = ? AND ip_dst = ? '
                 data =[(str(path),str(src) , str(dst))]
-                sql.update(self.conn , _sql , data)
+                sql.update(self.flowconn , _sql , data)
 
             else:
                 _sql = '''INSERT INTO flow (ip_src ,ip_dst , path) values (?, ? , ?)'''

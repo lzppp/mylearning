@@ -53,7 +53,7 @@ DB_FILE_PATH = ''
 # 表名称
 TABLE_NAME = ''
 # 是否打印sql
-SHOW_SQL = True
+SHOW_SQL = False
 
 
 def get_conn(path):
