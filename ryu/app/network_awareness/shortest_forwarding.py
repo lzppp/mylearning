@@ -428,11 +428,11 @@ class ShortestForwarding(app_manager.RyuApp):
         """
         try:
             fetchall_sql = 'SELECT * FROM flow WHERE ip_src = ? AND ip_dst = ?'
-            data =[(str(src) , str(dst)]
+            data = [(str(src) , str(dst))]
             if fetchone(self.flowconn, fetchall_sql , data) :
                 #update
                 _sql = 'UPDATE flow SET path = ? WHERE ip_src = ? AND ip_dst = ? '
-                data =[str(path),(str(src) , str(dst)]
+                data =[(str(path),(str(src) , str(dst))]
                 sql.update(self.conn , _sql , data)
 
             else:
