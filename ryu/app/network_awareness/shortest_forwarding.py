@@ -57,7 +57,7 @@ TABLESWITCH = '''CREATE TABLE `switch` (
 TABLEFLOW = '''CREATE TABLE `flow` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                 `ip_src` varchar(20) NOT NULL,
-                `ip_dst` varchar(20) DEFAULT NULL
+                `ip_dst` varchar(20) DEFAULT NULL,
                 `buffer` varchar(20) DEFAULT NULL,
                 `routepath` varchar(40) DEFAULT NULL
             )'''
