@@ -383,9 +383,6 @@ class NetworkMonitor(app_manager.RyuApp):
         print data
         sql.update(self.conn, update_sql, data)
 
-    def update_bw():
-        print "TBD"
-
             
     def show_stat(self, type):
         '''

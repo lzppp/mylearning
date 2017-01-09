@@ -42,6 +42,7 @@ import sql
 
 CONF = cfg.CONF
 GPATH = '/home/mini/tempmessage/switchinfo.db'
+FPATH = '/home/mini/tempmessage/flow.db'
 TABLESWITCH = '''CREATE TABLE `switch` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                 `sw1` varchar(20) NOT NULL,
@@ -53,7 +54,13 @@ TABLESWITCH = '''CREATE TABLE `switch` (
                 `qoe` varchar(20) DEFAULT NULL
             )'''
 
-
+TABLEFLOW = '''CREATE TABLE `flow` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+                `ip_src` varchar(20) NOT NULL,
+                `ip_dst` varchar(20) DEFAULT NULL
+                `buffer` varchar(20) DEFAULT NULL,
+                `routepath` varchar(40) DEFAULT NULL
+            )'''
 class ShortestForwarding(app_manager.RyuApp):
     """
         ShortestForwarding is a Ryu app for forwarding packets in shortest
@@ -81,8 +88,11 @@ class ShortestForwarding(app_manager.RyuApp):
         self.weight = self.WEIGHT_MODEL[CONF.weight]
 
         self.conn = sql.get_conn(GPATH)
+        self.flowconn = sql.get_conn(FPATH)
         sql.drop_table(self.conn , 'switch')
         sql.create_table(self.conn , TABLESWITCH)
+        sql.drop_table(self.conn , 'flow')
+        sql.create_table(self.conn , TABLEFLOW)
 
     def set_weight_mode(self, weight):
         """
@@ -245,7 +255,21 @@ class ShortestForwarding(app_manager.RyuApp):
         graph = self.awareness.graph
 
         if weight == self.WEIGHT_MODEL['hop']:
+            """
+                TBD 
+                1. has a path in flow sql maint
+                2. else recalculate
+            """
+            print "TBD"
             try:
+                '''
+                if path in qoe
+                    path = self.awareness.k_shortest_paths(graph, src, dst,
+
+                                                        weight='delay')
+                    set cost in path large
+                '''
+
                 paths = shortest_paths.get(src).get(dst)
                 return paths[0]
             except:
@@ -389,6 +413,7 @@ class ShortestForwarding(app_manager.RyuApp):
                 # Path has already calculated, just get it.
                 path = self.get_path(src_sw, dst_sw, weight=self.weight)
                 self.saving_path(ip_src , ip_dst , path)
+                print type(path)
                 self.logger.info("[PATH]%s<-->%s: %s" % (ip_src, ip_dst, path))
                 flow_info = (eth_type, ip_src, ip_dst, in_port)
                 # install flow entries to datapath along side the path.
@@ -401,6 +426,20 @@ class ShortestForwarding(app_manager.RyuApp):
         """
             TBD:saving the topo path
         """
+        try:
+            fetchall_sql = 'SELECT * FROM flow WHERE ip_src = ? AND ip_dst = ?'
+            data =[(str(src) , str(dst)]
+            if fetchone(self.flowconn, fetchall_sql , data) :
+                #update
+                _sql = 'UPDATE flow SET path = ? WHERE ip_src = ? AND ip_dst = ? '
+                data =[str(path),(str(src) , str(dst)]
+                sql.update(self.conn , _sql , data)
+
+            else:
+                _sql = '''INSERT INTO flow (ip_src ,ip_dst , path) values (?, ? , ?)'''
+                data = (str(src) ,str (dst) , str(path))
+                sql.save(self.flowconn , _sql , data)
+
         print "TBD"
 
 

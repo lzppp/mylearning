@@ -299,7 +299,6 @@ class NetworkAwareness(app_manager.RyuApp):
         savesql = '''INSERT INTO switch (sw1 , po1 , sw2 , po2) values (?, ?, ?, ?)'''
         data = [(str(switch1) , link[0] , str(switch2) ,link[1])]
         sql.save(self.conn , savesql , data)
-        print("TBD")
         
     def show_topology(self):
         switch_num = len(self.graph.nodes())

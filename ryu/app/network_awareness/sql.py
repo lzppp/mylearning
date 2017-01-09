@@ -179,6 +179,9 @@ def fetchone(conn, sql, data):
             if len(r) > 0:
                 for e in range(len(r)):
                     print(r[e])
+                return True
+            else:
+                return False        
         else:
             print('the [{}] equal None!'.format(data))
     else:
