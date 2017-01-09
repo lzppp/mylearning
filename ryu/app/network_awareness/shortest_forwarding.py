@@ -91,8 +91,6 @@ class ShortestForwarding(app_manager.RyuApp):
         self.flowconn = sql.get_conn(FPATH)
         sql.drop_table(self.conn , 'switch')
         sql.create_table(self.conn , TABLESWITCH)
-        sql.drop_table(self.flowconn , 'flow')
-        sql.create_table(self.flowconn , TABLEFLOW)
 
     def set_weight_mode(self, weight):
         """
@@ -262,6 +260,8 @@ class ShortestForwarding(app_manager.RyuApp):
             """
             print "TBD"
             try:
+                fetchall_sql = '''SELECT * FROM flow'''
+                sql.fetchall(self.flowconn , fetchall_sql)
                 '''
                 if path in qoe
                     path = self.awareness.k_shortest_paths(graph, src, dst,
@@ -413,7 +413,6 @@ class ShortestForwarding(app_manager.RyuApp):
                 # Path has already calculated, just get it.
                 path = self.get_path(src_sw, dst_sw, weight=self.weight)
                 self.saving_path(ip_src , ip_dst , path)
-                print type(path)
                 self.logger.info("[PATH]%s<-->%s: %s" % (ip_src, ip_dst, path))
                 flow_info = (eth_type, ip_src, ip_dst, in_port)
                 # install flow entries to datapath along side the path.
@@ -425,22 +424,24 @@ class ShortestForwarding(app_manager.RyuApp):
     def saving_path(self , src , dst , path):
         """
             TBD:saving the topo path
+            path is a list
         """
-        try:
-            fetchall_sql = 'SELECT * FROM flow WHERE ip_src = ? AND ip_dst = ?'
-            data = [(str(src) , str(dst))]
-            if fetchone(self.flowconn, fetchall_sql , data) :
-                #update
-                _sql = 'UPDATE flow SET path = ? WHERE ip_src = ? AND ip_dst = ? '
-                data =[(str(path),str(src) , str(dst))]
-                sql.update(self.flowconn , _sql , data)
+        # try:
+        #     fetchall_sql = 'SELECT * FROM flow WHERE ip_src = ? AND ip_dst = ?'
+        #     data = [(str(src) , str(dst))]
+        #     if fetchone(self.flowconn, fetchall_sql , data) :
+        #         #update
+        #         _sql = 'UPDATE flow SET path = ? WHERE ip_src = ? AND ip_dst = ? '
+        #         data =[(str(path),str(src) , str(dst))]
+        #         sql.update(self.flowconn , _sql , data)
 
-            else:
-                _sql = '''INSERT INTO flow (ip_src ,ip_dst , path) values (?, ? , ?)'''
-                data = (str(src) ,str (dst) , str(path))
-                sql.save(self.flowconn , _sql , data)
-        except:
-            print "try false"
+        #     else:
+        #         _sql = '''INSERT INTO flow (ip_src ,ip_dst , path) values (?, ? , ?)'''
+        #         data = (str(src) ,str (dst) , str(path))
+        #         sql.save(self.flowconn , _sql , data)
+        # except:
+        #     print "try false"
+        print "TBD"
 
 
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
