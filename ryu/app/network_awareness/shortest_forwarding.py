@@ -422,7 +422,7 @@ class ShortestForwarding(app_manager.RyuApp):
                                   self.awareness.access_table, path,
                                   flow_info, msg.buffer_id, msg.data)
         return
-    def saving_path(src , dst , path):
+    def saving_path(self , src , dst , path):
         """
             TBD:saving the topo path
         """
