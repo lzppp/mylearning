@@ -40,7 +40,7 @@ import setting
 import sql
 
 CONF = cfg.CONF
-GPATH = './switchinfo.db'
+GPATH = '/home/mini/tempmessage/switchinfo.db'
 
 
 class NetworkAwareness(app_manager.RyuApp):

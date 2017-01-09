@@ -440,7 +440,7 @@ class ShortestForwarding(app_manager.RyuApp):
                 data = (str(src) ,str (dst) , str(path))
                 sql.save(self.flowconn , _sql , data)
         except:
-            print "TBD"
+            print "try false"
 
 
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)

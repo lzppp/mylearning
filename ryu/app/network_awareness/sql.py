@@ -184,8 +184,10 @@ def fetchone(conn, sql, data):
                 return False        
         else:
             print('the [{}] equal None!'.format(data))
+            return False
     else:
         print('the [{}] is empty or equal None!'.format(sql))
+        return False
 
 
 def update(conn, sql, data):
