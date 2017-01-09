@@ -41,7 +41,7 @@ import sql
 
 
 CONF = cfg.CONF
-GPATH = './switchinfo.db'
+GPATH = '/home/mini/tempmessage/switchinfo.db'
 TABLESWITCH = '''CREATE TABLE `switch` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                 `sw1` varchar(20) NOT NULL,
@@ -388,6 +388,7 @@ class ShortestForwarding(app_manager.RyuApp):
             if dst_sw:
                 # Path has already calculated, just get it.
                 path = self.get_path(src_sw, dst_sw, weight=self.weight)
+                self.saving_path(ip_src , ip_dst , path)
                 self.logger.info("[PATH]%s<-->%s: %s" % (ip_src, ip_dst, path))
                 flow_info = (eth_type, ip_src, ip_dst, in_port)
                 # install flow entries to datapath along side the path.
@@ -396,6 +397,12 @@ class ShortestForwarding(app_manager.RyuApp):
                                   self.awareness.access_table, path,
                                   flow_info, msg.buffer_id, msg.data)
         return
+    def saving_path(src , dst , path):
+        """
+            TBD:saving the topo path
+        """
+        print "TBD"
+
 
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def _packet_in_handler(self, ev):

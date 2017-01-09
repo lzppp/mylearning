@@ -194,6 +194,10 @@ class NetworkAwareness(app_manager.RyuApp):
         """
             Great K shortest paths of src to dst.
         """
+
+        """
+            calculate the path
+        """
         generator = nx.all_shortest_paths(graph, source=src,
                                              target=dst, weight=weight)
         shortest_paths = []
