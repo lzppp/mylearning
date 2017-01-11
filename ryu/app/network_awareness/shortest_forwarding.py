@@ -58,7 +58,7 @@ TABLEFLOW = '''CREATE TABLE `flow` (
                 `id` INTEGER PRIMARY KEY AUTOINCREMENT,
                 `ip_src` varchar(20) NOT NULL,
                 `ip_dst` varchar(20) DEFAULT NULL,
-                `buffer` varchar(20) DEFAULT NULL,
+                `flowspeed` varchar(20) DEFAULT NULL,
                 `routepath` varchar(40) DEFAULT NULL
             )'''
 class ShortestForwarding(app_manager.RyuApp):
@@ -91,6 +91,7 @@ class ShortestForwarding(app_manager.RyuApp):
         self.flowconn = sql.get_conn(FPATH)
         sql.drop_table(self.conn , 'switch')
         sql.create_table(self.conn , TABLESWITCH)
+        sql.create_table(self.conn , TABLEFLOW)
 
     def set_weight_mode(self, weight):
         """

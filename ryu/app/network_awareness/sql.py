@@ -174,7 +174,10 @@ def fetchone(conn, sql, data):
             cu = get_cursor(conn)
             if SHOW_SQL:
                 print('执行sql:[{}],参数:[{}]'.format(sql, data))
-            cu.execute(sql, d)
+            try:
+                cu.execute(sql, d)
+            except:
+                return False
             r = cu.fetchall()
             if len(r) > 0:
                 for e in range(len(r)):
@@ -204,6 +207,22 @@ def update(conn, sql, data):
     else:
         print('the [{}] is empty or equal None!'.format(sql))
 
+def upindate(conn, sql, data):
+    '''更新数据/失败则插入'''
+    if sql is not None and sql != '':
+        if data is not None:
+            cu = get_cursor(conn)
+            for d in data:
+                if SHOW_SQL:
+                    print('执行sql:[{}],参数:[{}]'.format(sql, d))
+                try:
+                    cu.execute(sql, d)
+                except :
+                    sql = '''INSERT INTO ? (? , gender ,age,address ,phone) values (?, ?, ?, ?, ?)'''
+                conn.commit()
+            close_all(conn, cu)
+    else:
+        print('the [{}] is empty or equal None!'.format(sql))
 
 def delete(conn, sql, data):
     '''删除数据'''
@@ -297,6 +316,16 @@ def delete_test():
             ('HongtenCC', 3)]
     conn = get_conn(DB_FILE_PATH)
     delete(conn, delete_sql, data)
+def upindate_test():
+    '''
+        保存删除数据test
+    '''
+    print('保存删除test')
+    update_sql = 'UPDATE ? SET ? = ? WHERE ? = ? '
+    data = [('student','NAME','HongtenAA','ID', 1),            
+            ('student','NAME','HongtenCC','ID', 3),]
+    conn = get_conn(DB_FILE_PATH)
+    upindate(conn, update_sql, data)
 
 ###############################################################
 # 测试操作     END
