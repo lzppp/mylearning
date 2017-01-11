@@ -176,8 +176,9 @@ def fetchone(conn, sql, data):
                 print('执行sql:[{}],参数:[{}]'.format(sql, data))
             try:
                 cu.execute(sql, d)
-            except e:
-                print e
+            except Exception,e:  
+                print Exception,":",e
+                
                 return False
             r = cu.fetchall()
             if len(r) > 0:
