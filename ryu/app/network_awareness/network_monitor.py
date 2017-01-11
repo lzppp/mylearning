@@ -394,7 +394,7 @@ class NetworkMonitor(app_manager.RyuApp):
         print 'TODO:adding-----------'
         _sql = 'SELECT * FROM flow WHERE ip_src = ? AND ip_dst = ?'
         data = (key[2],key[1])
-        if sql.fetchone(self.conn, _sql ,data)
+        if sql.fetchone(self.conn, _sql ,data):
             _sql = 'UPDATE flow SET flowspeed = ? WHERE ip_src = ? AND ip_dst = ? '
             data = (speed,key[2],key[1])
             sql.update(self.conn, _sql, data)
