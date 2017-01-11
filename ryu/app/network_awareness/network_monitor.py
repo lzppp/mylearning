@@ -404,7 +404,7 @@ class NetworkMonitor(app_manager.RyuApp):
             print "insert method"
             _sql = '''INSERT INTO flow (ip_src , ip_dst ,flowspeed) values (?, ?, ?)'''
             data = [(key[2],key[1],speed)]
-            sql.insert(self.conn , _sql , data)
+            sql.save(self.conn , _sql , data)
         sql.SHOW_SQL = False
     def show_stat(self, type):
         '''
