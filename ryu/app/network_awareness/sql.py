@@ -173,7 +173,7 @@ def fetchone(conn, sql, data):
             d = data
             cu = get_cursor(conn)
             if SHOW_SQL:
-                print('执行sql:[{}],参数:[{}]'.format(sql, data))
+                print('执行sql:[{}],参数:[{}]'.format(sql, d))
             try:
                 cu.execute(sql, d)
             except Exception,e:  
