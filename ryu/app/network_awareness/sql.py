@@ -170,7 +170,7 @@ def fetchone(conn, sql, data):
     if sql is not None and sql != '':
         if data is not None:
             # Do this instead
-            d = (data,)
+            d = data
             cu = get_cursor(conn)
             if SHOW_SQL:
                 print('执行sql:[{}],参数:[{}]'.format(sql, data))
@@ -292,8 +292,8 @@ def fetchall_test():
 def fetchone_test():
     '''查询一条数据...'''
     print('查询一条数据...')
-    fetchone_sql = 'SELECT * FROM student WHERE ID = ? '
-    data = 1
+    fetchone_sql = 'SELECT * FROM student WHERE gender = ? AND name = ? '
+    data = ('男','Tom')
     conn = get_conn(DB_FILE_PATH)
     fetchone(conn, fetchone_sql, data)
 
