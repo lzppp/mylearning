@@ -394,16 +394,16 @@ class NetworkMonitor(app_manager.RyuApp):
         print 'TODO:adding-----------'
         sql.SHOW_SQL = True
         _sql = 'SELECT * FROM flow WHERE ip_src = ? AND ip_dst = ?'
-        data = (key[2],key[1])
+        data = [(key[2],key[1])]
         if sql.fetchone(self.conn, _sql ,data):
             print "update method"
             _sql = 'UPDATE flow SET flowspeed = ? WHERE ip_src = ? AND ip_dst = ? '
-            data = (speed,key[2],key[1])
+            data = [(speed,key[2],key[1])]
             sql.update(self.conn, _sql, data)
         else:
             print "insert method"
             _sql = '''INSERT INTO flow (ip_src , ip_dst ,flowspeed) values (?, ?, ?)'''
-            data = (key[2],key[1],speed)
+            data = [(key[2],key[1],speed)]
         sql.SHOW_SQL = False
     def show_stat(self, type):
         '''
