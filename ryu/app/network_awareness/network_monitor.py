@@ -392,6 +392,7 @@ class NetworkMonitor(app_manager.RyuApp):
             speed are the speed
         """
         print 'TODO:adding-----------'
+        sql.SHOW_SQL = True
         _sql = 'SELECT * FROM flow WHERE ip_src = ? AND ip_dst = ?'
         data = (key[2],key[1])
         if sql.fetchone(self.conn, _sql ,data):
@@ -403,6 +404,7 @@ class NetworkMonitor(app_manager.RyuApp):
             print "insert method"
             _sql = '''INSERT INTO flow (ip_src , ip_dst ,flowspeed) values (?, ?, ?)'''
             data = (key[2],key[1],speed)
+        sql.SHOW_SQL = False
     def show_stat(self, type):
         '''
             Show statistics info according to data type.
