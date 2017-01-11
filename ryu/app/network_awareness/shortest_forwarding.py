@@ -91,6 +91,7 @@ class ShortestForwarding(app_manager.RyuApp):
         self.flowconn = sql.get_conn(FPATH)
         sql.drop_table(self.conn , 'switch')
         sql.create_table(self.conn , TABLESWITCH)
+        sql.drop_table(self.conn , 'flow')
         sql.create_table(self.conn , TABLEFLOW)
 
     def set_weight_mode(self, weight):
