@@ -181,6 +181,7 @@ def fetchone(conn, sql, data):
                 
                 return False
             r = cu.fetchall()
+            print "len of result %d" %len(r)
             if len(r) > 0:
                 for e in range(len(r)):
                     print(r[e])
