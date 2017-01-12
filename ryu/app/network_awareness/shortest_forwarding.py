@@ -89,10 +89,23 @@ class ShortestForwarding(app_manager.RyuApp):
 
         self.conn = sql.get_conn(GPATH)
         self.flowconn = sql.get_conn(FPATH)
+
+
         sql.drop_table(self.conn , 'switch')
         sql.create_table(self.conn , TABLESWITCH)
         sql.drop_table(self.conn , 'flow')
         sql.create_table(self.conn , TABLEFLOW)
+
+        self.vip_thread = hub.spawn(self._vip)
+
+
+    def _vip(self):
+        """
+            read the flow table in flow.db that is an vip list
+        """
+        fetchall_sql = '''SELECT * FROM flow'''
+        result = sql.fetchall(self.flowconn , fetchall_sql)
+        
 
     def set_weight_mode(self, weight):
         """
@@ -262,8 +275,7 @@ class ShortestForwarding(app_manager.RyuApp):
             """
             print "TBD"
             try:
-                fetchall_sql = '''SELECT * FROM flow'''
-                sql.fetchall(self.flowconn , fetchall_sql)
+                
                 '''
                 if path in qoe
                     path = self.awareness.k_shortest_paths(graph, src, dst,
@@ -409,6 +421,7 @@ class ShortestForwarding(app_manager.RyuApp):
         in_port = msg.match['in_port']
 
         result = self.get_sw(datapath.id, in_port, ip_src, ip_dst)
+        if novip
         if result:
             src_sw, dst_sw = result[0], result[1]
             if dst_sw:

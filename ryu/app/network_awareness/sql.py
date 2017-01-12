@@ -159,6 +159,7 @@ def fetchall(conn, sql):
         cu.execute(sql)
         r = cu.fetchall()
         if len(r) > 0:
+            return r
             for e in range(len(r)):
                 print(r[e])
     else:
@@ -181,7 +182,6 @@ def fetchone(conn, sql, data):
                 
                 return False
             r = cu.fetchall()
-            print "len of result %d" %len(r)
             if len(r) > 0:
                 for e in range(len(r)):
                     print(r[e])
