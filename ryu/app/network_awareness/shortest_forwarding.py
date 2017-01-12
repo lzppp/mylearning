@@ -90,7 +90,8 @@ class ShortestForwarding(app_manager.RyuApp):
         self.vip = {}
         self.conn = sql.get_conn(GPATH)
         self.flowconn = sql.get_conn(FPATH)
-
+ 
+        self.flow_in_road = {}
 
         sql.drop_table(self.conn , 'switch')
         sql.create_table(self.conn , TABLESWITCH)
@@ -272,22 +273,7 @@ class ShortestForwarding(app_manager.RyuApp):
         graph = self.awareness.graph
 
         if weight == self.WEIGHT_MODEL['hop']:
-            """
-                TBD 
-                1. has a path in flow sql maint
-                2. else recalculate
-            """
-            print "TBD"
             try:
-                
-                '''
-                if path in qoe
-                    path = self.awareness.k_shortest_paths(graph, src, dst,
-
-                                                        weight='delay')
-                    set cost in path large
-                '''
-
                 paths = shortest_paths.get(src).get(dst)
                 return paths[0]
             except:
@@ -425,35 +411,60 @@ class ShortestForwarding(app_manager.RyuApp):
         in_port = msg.match['in_port']
 
         result = self.get_sw(datapath.id, in_port, ip_src, ip_dst)
-
+        """
+            todo!!!!! 
+            中文注释：1‘flowinroad存两份
+                        2流量速度和vip一起传输？不用传输吧？？新建list搜素
+        """
         print eth_type
         if False and ip_dst in vip and ip_src == '202.116.7.106':
             '''
                 do QoE APP AWARE
             '''
+            flow_in_road[(ip_src , ip_dst)]['in_port'] = in_port
+            flow_in_road[(ip_src , ip_dst)]['eth_type'] = eth_type
+            flow_in_road[(ip_src , ip_dst)]['buffer_id'] = buffer_id
+            flow_in_road[(ip_src , ip_dst)]['datapath']=datapath
 
-            graph = self.awareness.graph
-            flow_in_road = self.monitor.flow_in_road
-            for ip in ip_dst:
-                result = self.get_sw(datapath.id, in_port, ip_src, ip)
+
+            graph = self.awareness.graph.copy()
+            flow_in_road = self.monitor.flow_in_road.copy()
+            for ip in vip:
+                result = self.get_sw(flow_in_road[(ip_src , ip)]['datapath'].id, flow_in_road[(ip_src , ip)]['in_port'], ip_src, ip)
                 src_sw, dst_sw = result[0] , result[1]
-                path = self.get_path(src_sw, dst_sw , 'delay')
-                flow_infos [ip_src , ip_dst] = (path , eth_type , in_port)
-                graphchange(graph , path)
-                del flow_in_road[(ip_src , ip_dst)]
+                if dst_sw:
+                    path = self.get_path(src_sw, dst_sw , 'delay')
+                    flow_in_road[(ip_src , ip)]['path'] = path
+                    flow_info = (flow_in_road[(ip_src , ip)]['eth_type'], ip_src, ip, flow_in_road[(ip_src , ip)]['in_port'])
+                    self.install_flow(  self.datapaths,
+                                        self.awareness.link_to_port,
+                                        self.awareness.access_table, path,
+                                        flow_info, msg.buffer_id, msg.data)
+                    graphchange(graph , path)
+                    del flow_in_road[(ip_src , ip)]
+
+
 
 
 
             recalculatebySA(flow_in_road , graph);
 
             print "TBD"
+        if flow_in_road[(ip_src , ip_dst)].setdefault('path')!=None:
+            path = flow_in_road[(ip_src , ip_dst)]['path']
+            self.logger.info("[PATH]%s<-->%s: %s" % (ip_src, ip_dst, path))
+            flow_info = (eth_type, ip_src, ip_dst, in_port)
+            # install flow entries to datapath along side the path.
+            self.install_flow(  self.datapaths,
+                                self.awareness.link_to_port,
+                                self.awareness.access_table, path,
+                                flow_info, msg.buffer_id, msg.data)
         else:
             if result:
                 src_sw, dst_sw = result[0], result[1]
                 if dst_sw:
                     # Path has already calculated, just get it.
                     path = self.get_path(src_sw, dst_sw, weight=self.weight)
-                    self.saving_path(ip_src , ip_dst , path)
                     self.logger.info("[PATH]%s<-->%s: %s" % (ip_src, ip_dst, path))
                     flow_info = (eth_type, ip_src, ip_dst, in_port)
                     # install flow entries to datapath along side the path.
@@ -461,7 +472,11 @@ class ShortestForwarding(app_manager.RyuApp):
                                       self.awareness.link_to_port,
                                       self.awareness.access_table, path,
                                       flow_info, msg.buffer_id, msg.data)
-                    flow_in_road[(ip_src , ip_dst)].append
+                    flow_in_road[(ip_src , ip_dst)]['path'] = path
+                    flow_in_road[(ip_src , ip_dst)]['in_port'] = in_port
+                    flow_in_road[(ip_src , ip_dst)]['eth_type'] = eth_type
+                    flow_in_road[(ip_src , ip_dst)]['buffer_id'] = buffer_id
+                    flow_in_road[(ip_src , ip_dst)]['datapath'] = datapath
         return
 
 
