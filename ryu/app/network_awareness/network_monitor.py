@@ -56,6 +56,7 @@ class NetworkMonitor(app_manager.RyuApp):
         self.graph = None
         self.capabilities = None
         self.best_paths = None
+        self.flow_in_road = {}
         # Start to green thread to monitor traffic and calculating
         # free bandwidth of links respectively.
         self.monitor_thread = hub.spawn(self._monitor)
@@ -271,6 +272,7 @@ class NetworkMonitor(app_manager.RyuApp):
 
             self._save_stats(self.flow_speed[dpid], key, speed, 5)
             self.flowsave(key , speed)
+            self.flow_in_road[(key[2] , key[1])] = speed;
 
     @set_ev_cls(ofp_event.EventOFPPortStatsReply, MAIN_DISPATCHER)
     def _port_stats_reply_handler(self, ev):
@@ -391,6 +393,7 @@ class NetworkMonitor(app_manager.RyuApp):
                    )
             speed are the speed
         """
+
         print 'TODO:adding-----------'
         _sql = 'SELECT * FROM flow WHERE ip_src = ? AND ip_dst = ?'
         data = key[2],key[1]

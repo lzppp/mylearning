@@ -105,7 +105,10 @@ class ShortestForwarding(app_manager.RyuApp):
         """
         fetchall_sql = '''SELECT * FROM flow'''
         result = sql.fetchall(self.flowconn , fetchall_sql)
-        
+        for r in result:
+            vip[r[1]] = r[2]
+
+        hub.sleep(setting.DELAY_DETECTING_PERIOD)
 
     def set_weight_mode(self, weight):
         """
@@ -421,21 +424,48 @@ class ShortestForwarding(app_manager.RyuApp):
         in_port = msg.match['in_port']
 
         result = self.get_sw(datapath.id, in_port, ip_src, ip_dst)
-        if novip
-        if result:
-            src_sw, dst_sw = result[0], result[1]
-            if dst_sw:
-                # Path has already calculated, just get it.
-                path = self.get_path(src_sw, dst_sw, weight=self.weight)
-                self.saving_path(ip_src , ip_dst , path)
-                self.logger.info("[PATH]%s<-->%s: %s" % (ip_src, ip_dst, path))
-                flow_info = (eth_type, ip_src, ip_dst, in_port)
-                # install flow entries to datapath along side the path.
-                self.install_flow(self.datapaths,
-                                  self.awareness.link_to_port,
-                                  self.awareness.access_table, path,
-                                  flow_info, msg.buffer_id, msg.data)
+
+        print eth_type
+        if False and ip_dst in vip and ip_src == '202.116.7.106':
+            '''
+                do QoE APP AWARE
+            '''
+
+            graph = self.awareness.graph
+            flow_in_road = self.monitor.flow_in_road
+            for ip in ip_dst:
+                result = self.get_sw(datapath.id, in_port, ip_src, ip)
+                src_sw, dst_sw = result[0] , result[1]
+                path = self.get_path(src_sw, dst_sw , 'delay')
+                flow_infos [ip_src , ip_dst] = (path , eth_type , in_port)
+                graphchange(graph , path)
+                del flow_in_road[(ip_src , ip_dst)]
+
+
+
+            recalculatebySA(flow_in_road , graph);
+
+            print "TBD"
+        else:
+            if result:
+                src_sw, dst_sw = result[0], result[1]
+                if dst_sw:
+                    # Path has already calculated, just get it.
+                    path = self.get_path(src_sw, dst_sw, weight=self.weight)
+                    self.saving_path(ip_src , ip_dst , path)
+                    self.logger.info("[PATH]%s<-->%s: %s" % (ip_src, ip_dst, path))
+                    flow_info = (eth_type, ip_src, ip_dst, in_port)
+                    # install flow entries to datapath along side the path.
+                    self.install_flow(self.datapaths,
+                                      self.awareness.link_to_port,
+                                      self.awareness.access_table, path,
+                                      flow_info, msg.buffer_id, msg.data)
+                    flow_in_road[(ip_src , ip_dst)].append
         return
+
+
+    def get_exist_flow(self , )
+
     def saving_path(self , src , dst , path):
         """
             TBD:saving the topo path
