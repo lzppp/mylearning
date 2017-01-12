@@ -464,8 +464,6 @@ class ShortestForwarding(app_manager.RyuApp):
         return
 
 
-    def get_exist_flow(self , )
-
     def saving_path(self , src , dst , path):
         """
             TBD:saving the topo path
