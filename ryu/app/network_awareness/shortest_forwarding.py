@@ -87,7 +87,7 @@ class ShortestForwarding(app_manager.RyuApp):
         self.delay_detector = kwargs["network_delay_detector"]
         self.datapaths = {}
         self.weight = self.WEIGHT_MODEL[CONF.weight]
-
+        self.vip = {}
         self.conn = sql.get_conn(GPATH)
         self.flowconn = sql.get_conn(FPATH)
 
