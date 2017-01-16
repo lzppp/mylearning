@@ -40,7 +40,7 @@ import network_monitor
 import network_delay_detector
 import sql
 import sa
-
+import copy
 
 CONF = cfg.CONF
 GPATH = '/home/mini/tempmessage/switchinfo.db'
@@ -417,7 +417,6 @@ class ShortestForwarding(app_manager.RyuApp):
         """
             todo!!!!! 
         """
-        print eth_type
         if ip_src == '202.116.7.106':
             '''
                 do QoE APP AWARE
