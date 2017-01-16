@@ -448,9 +448,6 @@ class ShortestForwarding(app_manager.RyuApp):
             pathset = {}
             selectpath = {}
             for flowkey in flow_in_road.keys():
-            '''
-                generator must change to list or dict
-            '''
                 path[flowkey] = []
                 for a in nx.shortest_simple_paths(self.graph, source=flow[flowkey]['src'],
                                                  target=flow[flowkey]['dst'], weight='cost'):
