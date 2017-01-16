@@ -410,6 +410,8 @@ class ShortestForwarding(app_manager.RyuApp):
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
         in_port = msg.match['in_port']
+        if self.flow_infome.has_key((ip_src , ip_dst)) == False:
+            self.flow_infome[(ip_src , ip_dst)]={}
 
         result = self.get_sw(datapath.id, in_port, ip_src, ip_dst)
         """
