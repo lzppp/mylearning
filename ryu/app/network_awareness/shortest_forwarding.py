@@ -461,7 +461,7 @@ class ShortestForwarding(app_manager.RyuApp):
                 selectpath[flowkey] = pathset[flowkey][random.randint(0, len(pathset[flowkey]) - 1)]
             safunction = sa.recalculatebySA(selectpath , self.awareness.graph)
             safunction.path = pathset
-            safunction.flow = flow
+            safunction.flow = flow_in_road
             safunction.copy_strategy = "method"
             print ("----------------------------start sa-------------------------------")
             state , e = safunction.anneal()
