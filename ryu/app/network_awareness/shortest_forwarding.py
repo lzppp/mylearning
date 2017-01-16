@@ -426,7 +426,7 @@ class ShortestForwarding(app_manager.RyuApp):
             self.flow_infome[(ip_src , ip_dst)]['buffer_id'] = msg.buffer_id
             self.flow_infome[(ip_src , ip_dst)]['datapath']=datapath
             graph = copy.deepcopy(self.awareness.graph)
-            flow_in_road = copy.deepcopy(self.monitor.self.flow_infome)
+            flow_in_road = copy.deepcopy(self.monitor.flow_in_road)
             for ip in vip:
                 result = self.get_sw(self.flow_infome[(ip_src , ip)]['datapath'].id, self.flow_infome[(ip_src , ip)]['in_port'], ip_src, ip)
                 src_sw, dst_sw = result[0] , result[1]
