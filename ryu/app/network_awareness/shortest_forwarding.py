@@ -464,6 +464,7 @@ class ShortestForwarding(app_manager.RyuApp):
             safunction.flow = flow_in_road
             safunction.copy_strategy = "method"
             print ("----------------------------start sa-------------------------------")
+            print flow_in_road
             state , e = safunction.anneal()
             print (state)
 
