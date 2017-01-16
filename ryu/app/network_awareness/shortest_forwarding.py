@@ -154,7 +154,7 @@ class ShortestForwarding(app_manager.RyuApp):
                                 match=match, instructions=inst)
         dp.send_msg(mod)
 
-    def send_flow_mod(self, datapath, flow_info, src_port, dst_port):
+    def send_flow_mod(self, datapath, self.flow_info, src_port, dst_port):
         """
             Build flow entry, and send it to datapath.
         """
@@ -163,8 +163,8 @@ class ShortestForwarding(app_manager.RyuApp):
         actions.append(parser.OFPActionOutput(dst_port))
 
         match = parser.OFPMatch(
-            in_port=src_port, eth_type=flow_info[0],
-            ipv4_src=flow_info[1], ipv4_dst=flow_info[2])
+            in_port=src_port, eth_type=self.flow_info[0],
+            ipv4_src=self.flow_info[1], ipv4_dst=self.flow_info[2])
 
         self.add_flow(datapath, 1, match, actions,
                       idle_timeout=15, hard_timeout=60)
@@ -335,19 +335,19 @@ class ShortestForwarding(app_manager.RyuApp):
         return src_sw, dst_sw
 
     def install_flow(self, datapaths, link_to_port, access_table, path,
-                     flow_info, buffer_id, data=None):
+                     self.flow_info, buffer_id, data=None):
         ''' 
             Install flow entires for roundtrip: go and back.
             @parameter: path=[dpid1, dpid2...]
-                        flow_info=(eth_type, src_ip, dst_ip, in_port)
+                        self.flow_info=(eth_type, src_ip, dst_ip, in_port)
         '''
         if path is None or len(path) == 0:
             self.logger.info("Path error!")
             return
-        in_port = flow_info[3]
+        in_port = self.flow_info[3]
         first_dp = datapaths[path[0]]
         out_port = first_dp.ofproto.OFPP_LOCAL
-        back_info = (flow_info[0], flow_info[2], flow_info[1])
+        back_info = (self.flow_info[0], self.flow_info[2], self.flow_info[1])
 
         # inter_link
         if len(path) > 2:
@@ -359,7 +359,7 @@ class ShortestForwarding(app_manager.RyuApp):
                 if port and port_next:
                     src_port, dst_port = port[1], port_next[0]
                     datapath = datapaths[path[i]]
-                    self.send_flow_mod(datapath, flow_info, src_port, dst_port)
+                    self.send_flow_mod(datapath, self.flow_info, src_port, dst_port)
                     self.send_flow_mod(datapath, back_info, dst_port, src_port)
                     self.logger.debug("inter_link flow install")
         if len(path) > 1:
@@ -371,13 +371,13 @@ class ShortestForwarding(app_manager.RyuApp):
                 return
             src_port = port_pair[1]
 
-            dst_port = self.get_port(flow_info[2], access_table)
+            dst_port = self.get_port(self.flow_info[2], access_table)
             if dst_port is None:
                 self.logger.info("Last port is not found.")
                 return
 
             last_dp = datapaths[path[-1]]
-            self.send_flow_mod(last_dp, flow_info, src_port, dst_port)
+            self.send_flow_mod(last_dp, self.flow_info, src_port, dst_port)
             self.send_flow_mod(last_dp, back_info, dst_port, src_port)
 
             # the first flow entry
@@ -387,17 +387,17 @@ class ShortestForwarding(app_manager.RyuApp):
                 self.logger.info("Port not found in first hop.")
                 return
             out_port = port_pair[0]
-            self.send_flow_mod(first_dp, flow_info, in_port, out_port)
+            self.send_flow_mod(first_dp, self.flow_info, in_port, out_port)
             self.send_flow_mod(first_dp, back_info, out_port, in_port)
             self.send_packet_out(first_dp, buffer_id, in_port, out_port, data)
 
         # src and dst on the same datapath
         else:
-            out_port = self.get_port(flow_info[2], access_table)
+            out_port = self.get_port(self.flow_info[2], access_table)
             if out_port is None:
                 self.logger.info("Out_port is None in same dp")
                 return
-            self.send_flow_mod(first_dp, flow_info, in_port, out_port)
+            self.send_flow_mod(first_dp, self.flow_info, in_port, out_port)
             self.send_flow_mod(first_dp, back_info, out_port, in_port)
             self.send_packet_out(first_dp, buffer_id, in_port, out_port, data)
 
@@ -416,34 +416,34 @@ class ShortestForwarding(app_manager.RyuApp):
             todo!!!!! 
         """
         print eth_type
-        if False and ip_dst in vip and ip_src == '202.116.7.106':
+        if ip_src == '202.116.7.106':
             '''
                 do QoE APP AWARE
             '''
-            flow_info[(ip_src , ip_dst)]['in_port'] = in_port
-            flow_info[(ip_src , ip_dst)]['eth_type'] = eth_type
-            flow_info[(ip_src , ip_dst)]['buffer_id'] = buffer_id
-            flow_info[(ip_src , ip_dst)]['datapath']=datapath
+            self.flow_info[(ip_src , ip_dst)]['in_port'] = in_port
+            self.flow_info[(ip_src , ip_dst)]['eth_type'] = eth_type
+            self.flow_info[(ip_src , ip_dst)]['buffer_id'] = buffer_id
+            self.flow_info[(ip_src , ip_dst)]['datapath']=datapath
             graph = copy.deepcopy(self.awareness.graph)
-            flow_in_road = copy.deepcopy(self.monitor.flow_info)
+            flow_in_road = copy.deepcopy(self.monitor.self.flow_info)
             for ip in vip:
-                result = self.get_sw(flow_info[(ip_src , ip)]['datapath'].id, flow_info[(ip_src , ip)]['in_port'], ip_src, ip)
+                result = self.get_sw(self.flow_info[(ip_src , ip)]['datapath'].id, self.flow_info[(ip_src , ip)]['in_port'], ip_src, ip)
                 src_sw, dst_sw = result[0] , result[1]
-                flow_info[(ip_src , ip_dst)]['src'] = src_sw
-                flow_info[(ip_src , ip_dst)]['dst'] = dst_sw
+                self.flow_info[(ip_src , ip_dst)]['src'] = src_sw
+                self.flow_info[(ip_src , ip_dst)]['dst'] = dst_sw
                 if dst_sw:
                     path = self.get_path(src_sw, dst_sw , 'delay')
-                    flow_info[(ip_src , ip)]['path'] = path
-                    flow_info = (flow_info[(ip_src , ip)]['eth_type'], ip_src, ip, flow_info[(ip_src , ip)]['in_port'])
+                    self.flow_info[(ip_src , ip)]['path'] = path
+                    self.flow_info = (self.flow_info[(ip_src , ip)]['eth_type'], ip_src, ip, self.flow_info[(ip_src , ip)]['in_port'])
                     self.install_flow(  self.datapaths,
                                         self.awareness.link_to_port,
                                         self.awareness.access_table, path,
-                                        flow_info, msg.buffer_id, msg.data)
+                                        self.flow_info, msg.buffer_id, msg.data)
                     graphchange(graph , path)
                     del flow_in_road[(ip_src , ip)]
             for key in flow_in_road.keys():
-                flow_in_road[key]['src'] = flow_info[key]['src']
-                flow_in_road[key]['dst'] = flow_info[key]['dst']
+                flow_in_road[key]['src'] = self.flow_info[key]['src']
+                flow_in_road[key]['dst'] = self.flow_info[key]['dst']
             
             pathset = {}
             selectpath = {}
@@ -464,15 +464,15 @@ class ShortestForwarding(app_manager.RyuApp):
 
 
             print "TBD"
-        if flow_info[(ip_src , ip_dst)].setdefault('path')!=None:
-            path = flow_info[(ip_src , ip_dst)]['path']
+        if self.flow_info[(ip_src , ip_dst)].setdefault('path')!=None:
+            path = self.flow_info[(ip_src , ip_dst)]['path']
             self.logger.info("[PATH]%s<-->%s: %s" % (ip_src, ip_dst, path))
-            flow_info = (eth_type, ip_src, ip_dst, in_port)
+            self.flow_info = (eth_type, ip_src, ip_dst, in_port)
             # install flow entries to datapath along side the path.
             self.install_flow(  self.datapaths,
                                 self.awareness.link_to_port,
                                 self.awareness.access_table, path,
-                                flow_info, msg.buffer_id, msg.data)
+                                self.flow_info, msg.buffer_id, msg.data)
         else:
             if result:
                 src_sw, dst_sw = result[0], result[1]
@@ -480,19 +480,19 @@ class ShortestForwarding(app_manager.RyuApp):
                     # Path has already calculated, just get it.
                     path = self.get_path(src_sw, dst_sw, weight=self.weight)
                     self.logger.info("[PATH]%s<-->%s: %s" % (ip_src, ip_dst, path))
-                    flow_info = (eth_type, ip_src, ip_dst, in_port)
+                    self.flow_info = (eth_type, ip_src, ip_dst, in_port)
                     # install flow entries to datapath along side the path.
                     self.install_flow(self.datapaths,
                                       self.awareness.link_to_port,
                                       self.awareness.access_table, path,
-                                      flow_info, msg.buffer_id, msg.data)
-                    flow_info[(ip_src , ip_dst)]['path'] = path
-                    flow_info[(ip_src , ip_dst)]['in_port'] = in_port
-                    flow_info[(ip_src , ip_dst)]['eth_type'] = eth_type
-                    flow_info[(ip_src , ip_dst)]['buffer_id'] = buffer_id
-                    flow_info[(ip_src , ip_dst)]['datapath'] = datapath
-                    flow_info[(ip_src , ip_dst)]['src'] = src_sw
-                    flow_info[(ip_src , ip_dst)]['dst'] = dst_sw
+                                      self.flow_info, msg.buffer_id, msg.data)
+                    self.flow_info[(ip_src , ip_dst)]['path'] = path
+                    self.flow_info[(ip_src , ip_dst)]['in_port'] = in_port
+                    self.flow_info[(ip_src , ip_dst)]['eth_type'] = eth_type
+                    self.flow_info[(ip_src , ip_dst)]['buffer_id'] = buffer_id
+                    self.flow_info[(ip_src , ip_dst)]['datapath'] = datapath
+                    self.flow_info[(ip_src , ip_dst)]['src'] = src_sw
+                    self.flow_info[(ip_src , ip_dst)]['dst'] = dst_sw
         return
 
 
