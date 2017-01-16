@@ -414,8 +414,6 @@ class ShortestForwarding(app_manager.RyuApp):
         result = self.get_sw(datapath.id, in_port, ip_src, ip_dst)
         """
             todo!!!!! 
-            中文注释：1‘flowinroad存两份
-                        2流量速度和vip一起传输？不用传输吧？？新建list搜素
         """
         print eth_type
         if False and ip_dst in vip and ip_src == '202.116.7.106':
