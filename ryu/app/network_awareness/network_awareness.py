@@ -198,7 +198,7 @@ class NetworkAwareness(app_manager.RyuApp):
         """
             calculate the path
         """
-        generator = nx.all_shortest_paths(graph, source=src,
+        generator = nx.shortest_simple_paths(graph, source=src,
                                              target=dst, weight=weight)
         shortest_paths = []
         try:

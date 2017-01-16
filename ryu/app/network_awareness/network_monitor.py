@@ -136,8 +136,8 @@ class NetworkMonitor(app_manager.RyuApp):
             minimal_band_width = min_bw
             for i in xrange(_len-1):
                 pre, curr = path[i], path[i+1]
-                if 'bandwidth' in graph[pre][curr]:
-                    bw = graph[pre][curr]['bandwidth']
+                if 'bw' in graph[pre][curr]:
+                    bw = graph[pre][curr]['bw']
                     minimal_band_width = min(bw, minimal_band_width)
                 else:
                     continue
@@ -189,9 +189,9 @@ class NetworkMonitor(app_manager.RyuApp):
                     bw_dst = bw_dict[dst_dpid][dst_port]
                     bandwidth = min(bw_src, bw_dst)
                     # add key:value of bandwidth into graph.
-                    graph[src_dpid][dst_dpid]['bandwidth'] = bandwidth
+                    graph[src_dpid][dst_dpid]['bw'] = bandwidth
                 else:
-                    graph[src_dpid][dst_dpid]['bandwidth'] = 0
+                    graph[src_dpid][dst_dpid]['bw'] = 0
             return graph
         except:
             self.logger.info("Create bw graph exception")
