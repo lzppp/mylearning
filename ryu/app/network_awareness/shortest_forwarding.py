@@ -452,15 +452,15 @@ class ShortestForwarding(app_manager.RyuApp):
             pathset = {}
             selectpath = {}
             for flowkey in flow_in_road.keys():
-                path[flowkey] = []
+                pathset[flowkey] = []
                 for a in nx.shortest_simple_paths(self.graph, source=flow_in_road[flowkey]['src'],
                                                  target=flow_in_road[flowkey]['dst'], weight='cost'):
-                    path[flowkey].append(a)
+                    pathset[flowkey].append(a)
 
             for flowkey in flow_in_road:
-                selectpath[flowkey] = path[flowkey][random.randint(0, len(path[flowkey]) - 1)]
+                selectpath[flowkey] = pathset[flowkey][random.randint(0, len(pathset[flowkey]) - 1)]
             safunction = sa.recalculatebySA(selectpath , self.awareness.graph)
-            safunction.path = path
+            safunction.path = pathset
             safunction.flow = flow
             safunction.copy_strategy = "method"
             print ("----------------------------start sa-------------------------------")
