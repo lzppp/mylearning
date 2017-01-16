@@ -271,7 +271,6 @@ class NetworkMonitor(app_manager.RyuApp):
                                     pre, period)
 
             self._save_stats(self.flow_speed[dpid], key, speed, 5)
-            self.flowsave(key , speed)
             if self.flow_in_road.has_key((key[2] , key[1])) == False:
                 self.flow_in_road[(key[2] , key[1])]={}
             self.flow_in_road[(key[2] , key[1])]['bw'] = speed
@@ -388,26 +387,6 @@ class NetworkMonitor(app_manager.RyuApp):
         data = [(str(bw) , str(dpid) , out_port)]
         print data
         sql.update(self.conn, update_sql, data)
-    def flowsave(self ,key ,speed):
-        """
-            key = (stat.match['in_port'],  stat.match.get('ipv4_dst'),
-                   stat.match.get('ipv4_src'),
-                   stat.instructions[0].actions[0].port,
-                   )
-            speed are the speed
-        """
-
-        print 'TODO:adding-----------'
-        _sql = 'SELECT * FROM flow WHERE ip_src = ? AND ip_dst = ?'
-        data = key[2],key[1]
-        if sql.fetchone(self.conn, _sql ,data):
-            _sql = 'UPDATE flow SET flowspeed = ? WHERE ip_src = ? AND ip_dst = ? '
-            data = [(speed,key[2],key[1])]
-            sql.update(self.conn, _sql, data)
-        else:
-            _sql = '''INSERT INTO flow (ip_src , ip_dst ,flowspeed) values (?, ?, ?)'''
-            data = [(key[2],key[1],speed)]
-            sql.save(self.conn , _sql , data)
     def show_stat(self, type):
         '''
             Show statistics info according to data type.
