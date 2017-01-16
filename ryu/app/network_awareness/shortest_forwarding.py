@@ -424,7 +424,7 @@ class ShortestForwarding(app_manager.RyuApp):
             '''
             self.flow_infome[(ip_src , ip_dst)]['in_port'] = in_port
             self.flow_infome[(ip_src , ip_dst)]['eth_type'] = eth_type
-            self.flow_infome[(ip_src , ip_dst)]['buffer_id'] = buffer_id
+            self.flow_infome[(ip_src , ip_dst)]['buffer_id'] = msg.buffer_id
             self.flow_infome[(ip_src , ip_dst)]['datapath']=datapath
             graph = copy.deepcopy(self.awareness.graph)
             flow_in_road = copy.deepcopy(self.monitor.self.flow_infome)
@@ -493,7 +493,7 @@ class ShortestForwarding(app_manager.RyuApp):
                     self.flow_infome[(ip_src , ip_dst)]['path'] = path
                     self.flow_infome[(ip_src , ip_dst)]['in_port'] = in_port
                     self.flow_infome[(ip_src , ip_dst)]['eth_type'] = eth_type
-                    self.flow_infome[(ip_src , ip_dst)]['buffer_id'] = buffer_id
+                    self.flow_infome[(ip_src , ip_dst)]['buffer_id'] = msg.buffer_id
                     self.flow_infome[(ip_src , ip_dst)]['datapath'] = datapath
                     self.flow_infome[(ip_src , ip_dst)]['src'] = src_sw
                     self.flow_infome[(ip_src , ip_dst)]['dst'] = dst_sw

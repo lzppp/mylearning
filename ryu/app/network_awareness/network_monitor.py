@@ -272,6 +272,8 @@ class NetworkMonitor(app_manager.RyuApp):
 
             self._save_stats(self.flow_speed[dpid], key, speed, 5)
             self.flowsave(key , speed)
+            if self.flow_in_road.has_key((key[2] , key[1])) == False:
+                self.flow_in_road[(key[2] , key[1])]={}
             self.flow_in_road[(key[2] , key[1])]['bw'] = speed
             self.flow_in_road[(key[2] , key[1])]['in_port'] = key[0]
 
