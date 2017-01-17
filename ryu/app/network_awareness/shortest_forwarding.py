@@ -419,7 +419,7 @@ class ShortestForwarding(app_manager.RyuApp):
         """
             todo!!!!! 
         """
-        if ip_src == '202.116.7.106' or ip_dst == '202.116.7.106':
+        if ip_src == '202.116.7.106':
             '''
                 do QoE APP AWARE
             '''
