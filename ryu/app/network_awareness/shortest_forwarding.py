@@ -42,6 +42,7 @@ import sql
 import sa
 import copy
 import random
+import setting
 
 CONF = cfg.CONF
 GPATH = '/home/mini/tempmessage/switchinfo.db'
@@ -399,7 +400,7 @@ class ShortestForwarding(app_manager.RyuApp):
                 self.logger.info("Out_port is None in same dp")
                 return
             self.send_flow_mod(first_dp, flow_info, in_port, out_port)
-            self.send_flow_mod(first_dp, back_info, out_port, in_port)
+            #self.send_flow_mod(first_dp, back_info, out_port, in_port)#back path
             self.send_packet_out(first_dp, buffer_id, in_port, out_port, data)
 
     def shortest_forwarding(self, msg, eth_type, ip_src, ip_dst):
@@ -430,6 +431,8 @@ class ShortestForwarding(app_manager.RyuApp):
             graph = copy.deepcopy(self.awareness.graph)
             flow_in_road = copy.deepcopy(self.monitor.flow_in_road)
             '''
+                to finish this part
+            '''
             for ip in self.vip:
                 result = self.get_sw(self.flow_infome[(ip_src , ip)]['datapath'].id, self.flow_infome[(ip_src , ip)]['in_port'], ip_src, ip)
                 src_sw, dst_sw = result[0] , result[1]
@@ -445,7 +448,7 @@ class ShortestForwarding(app_manager.RyuApp):
                                         flow_info, msg.buffer_id, msg.data)
                     graphchange(graph , path)
                     del flow_in_road[(ip_src , ip)]
-            '''
+            
             for key in flow_in_road.keys():
                 flow_in_road[key]['src'] = self.flow_infome[key]['src']
                 flow_in_road[key]['dst'] = self.flow_infome[key]['dst']
@@ -465,9 +468,18 @@ class ShortestForwarding(app_manager.RyuApp):
             safunction.flow = flow_in_road
             safunction.copy_strategy = "method"
             print ("----------------------------start sa-------------------------------")
-            print flow_in_road
             state , e = safunction.anneal()
-            print (state)
+            for key in state.keys():
+                if state[key] != self.flow_infome['path']:
+                    #resend flow table
+                    self.flow_infome['path'] = state[key]
+                    flow_info = (self.flow_infome[key]['eth_type'],
+                                 key[0], key[1], self.flow_infome[key]['in_port'])
+                    self.install_flow(self.datapaths,
+                                      self.awareness.link_to_port,
+                                      self.awareness.access_table, state[key],
+                                      flow_info, self.flow_infome[key]['buffer_id'], None)
+
 
 
             print "TBD"
