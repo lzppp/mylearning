@@ -454,7 +454,7 @@ class ShortestForwarding(app_manager.RyuApp):
             for flowkey in flow_in_road.keys():
                 pathset[flowkey] = []
                 for a in nx.shortest_simple_paths(self.awareness.graph, source=flow_in_road[flowkey]['src'],
-                                                 target=flow_in_road[flowkey]['dst'], weight='cost'):
+                                                 target=flow_in_road[flowkey]['dst'], weight='delay'):
                     pathset[flowkey].append(a)
 
             for flowkey in flow_in_road:

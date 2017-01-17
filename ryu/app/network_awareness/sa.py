@@ -10,14 +10,14 @@ class recalculatebySA(Annealer):
             cost+=graph[][]['cost']
         '''
         if len(tpath) == 2:
-            return self.graph[tpath[0]][tpath[1]]['cost']
+            return self.graph[tpath[0]][tpath[1]]['delay']
         elif len(tpath) == 1:
             return 0
         
         else:
             cost = 0
             for i in range(0,len(tpath)-1):
-                cost = cost + self.graph[tpath[i]][tpath[i+1]]['cost']
+                cost = cost + self.graph[tpath[i]][tpath[i+1]]['delay']
         return cost
     def bandcalculate(self , band , cost , tpath):
         if len(tpath) == 2:
@@ -89,16 +89,16 @@ if __name__ == '__main__':
     g.add_edge(1,3,weight=1)
     g.add_edge(2,4,weight=1)
     g.add_edge(3,4,weight=1)
-    g[1][2]['cost'] = 2
-    g[1][3]['cost'] = 2
-    g[2][4]['cost'] = 2
-    g[3][4]['cost'] = 2
+    g[1][2]['delay'] = 2
+    g[1][3]['delay'] = 2
+    g[2][4]['delay'] = 2
+    g[3][4]['delay'] = 2
     g[1][2]['bw'] = 2
     g[1][3]['bw'] = 2
     g[2][4]['bw'] = 2
     g[3][4]['bw'] = 2
     g.add_edge(2,3,weight=1)
-    g[2][3]['cost'] = 3
+    g[2][3]['delay'] = 3
     g[2][3]['bw'] = 1
     #init some flows
     flow = {}
@@ -121,7 +121,7 @@ if __name__ == '__main__':
             '''
             path[flowkey] = []
             for a in nx.shortest_simple_paths(g, source=flow[flowkey]['src'],
-                                             target=flow[flowkey]['dst'], weight='cost'):
+                                             target=flow[flowkey]['dst'], weight='delay'):
                 path[flowkey].append(a)
     for flowkey in flow:
             selectpath[flowkey] = path[flowkey][random.randint(0, len(path[flowkey]) - 1)]
