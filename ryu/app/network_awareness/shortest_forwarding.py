@@ -470,7 +470,7 @@ class ShortestForwarding(app_manager.RyuApp):
             print ("----------------------------start sa-------------------------------")
             state , e = safunction.anneal()
             for key in state.keys():
-                if state[key] != self.flow_infome['path']:
+                if state[key] != self.flow_infome[key]['path']:
                     #resend flow table
                     self.flow_infome['path'] = state[key]
                     flow_info = (self.flow_infome[key]['eth_type'],
