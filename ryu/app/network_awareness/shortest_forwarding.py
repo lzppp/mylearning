@@ -433,6 +433,7 @@ class ShortestForwarding(app_manager.RyuApp):
             '''
                 to finish this part
             '''
+            '''
             for ip in self.vip:
                 result = self.get_sw(self.flow_infome[(ip_src , ip)]['datapath'].id, self.flow_infome[(ip_src , ip)]['in_port'], ip_src, ip)
                 src_sw, dst_sw = result[0] , result[1]
@@ -448,7 +449,22 @@ class ShortestForwarding(app_manager.RyuApp):
                                         flow_info, msg.buffer_id, msg.data)
                     graphchange(graph , path)
                     del flow_in_road[(ip_src , ip)]
-            
+            '''
+            path = self.get_path(src_sw, dst_sw, weight='delay')
+            self.logger.info("[PATH]%s<-->%s: %s" % (ip_src, ip_dst, path))
+            flow_info = (eth_type, ip_src, ip_dst, in_port)
+                    # install flow entries to datapath along side the path.
+            self.install_flow(self.datapaths,
+                                      self.awareness.link_to_port,
+                                      self.awareness.access_table, path,
+                                      flow_info, msg.buffer_id, msg.data)
+            self.flow_infome[(ip_src , ip_dst)]['path'] = path
+            self.flow_infome[(ip_src , ip_dst)]['in_port'] = in_port
+            self.flow_infome[(ip_src , ip_dst)]['eth_type'] = eth_type
+            self.flow_infome[(ip_src , ip_dst)]['buffer_id'] = msg.buffer_id
+            self.flow_infome[(ip_src , ip_dst)]['datapath'] = datapath
+            self.flow_infome[(ip_src , ip_dst)]['src'] = src_sw
+            self.flow_infome[(ip_src , ip_dst)]['dst'] = dst_sw
             for key in flow_in_road.keys():
                 flow_in_road[key]['src'] = self.flow_infome[key]['src']
                 flow_in_road[key]['dst'] = self.flow_infome[key]['dst']
