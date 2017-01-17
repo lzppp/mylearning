@@ -492,6 +492,7 @@ class ShortestForwarding(app_manager.RyuApp):
             for key in state.keys():
                 if state[key] != self.flow_infome[key]['path']:
                     #resend flow table
+                    self.logger.info("[PATH]%s<-->%s: %s" % (key[0], key[1], state[key]))
                     self.flow_infome['path'] = state[key]
                     flow_info = (self.flow_infome[key]['eth_type'],
                                  key[0], key[1], self.flow_infome[key]['in_port'])
