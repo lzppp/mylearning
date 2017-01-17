@@ -104,7 +104,8 @@ class NetworkMonitor(app_manager.RyuApp):
         """
             Save bandwidth data into networkx graph object.
         """
-        while CONF.weight == 'bw':
+        #while CONF.weight == 'bw':
+        while True:
             self.graph = self.create_bw_graph(self.free_bandwidth)
             self.logger.debug("save_freebandwidth")
             hub.sleep(setting.MONITOR_PERIOD)
