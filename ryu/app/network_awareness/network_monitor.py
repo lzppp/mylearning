@@ -271,10 +271,11 @@ class NetworkMonitor(app_manager.RyuApp):
                                     pre, period)
 
             self._save_stats(self.flow_speed[dpid], key, speed, 5)
-            if self.flow_in_road.has_key((key[2] , key[1])) == False:
-                self.flow_in_road[(key[2] , key[1])]={}
-            self.flow_in_road[(key[2] , key[1])]['bw'] = speed
-            self.flow_in_road[(key[2] , key[1])]['in_port'] = key[0]
+            if key[1] != '224.0.0.251' or key[2] 1='224.0.0.251':
+                if self.flow_in_road.has_key((key[2] , key[1])) == False:
+                    self.flow_in_road[(key[2] , key[1])]={}
+                self.flow_in_road[(key[2] , key[1])]['bw'] = speed
+                self.flow_in_road[(key[2] , key[1])]['in_port'] = key[0]
 
     @set_ev_cls(ofp_event.EventOFPPortStatsReply, MAIN_DISPATCHER)
     def _port_stats_reply_handler(self, ev):
