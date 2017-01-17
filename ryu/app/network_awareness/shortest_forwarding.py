@@ -360,7 +360,7 @@ class ShortestForwarding(app_manager.RyuApp):
                     src_port, dst_port = port[1], port_next[0]
                     datapath = datapaths[path[i]]
                     self.send_flow_mod(datapath, flow_info, src_port, dst_port)
-                    #self.send_flow_mod(datapath, back_info, dst_port, src_port)#返回路径！！！修改下
+                    #self.send_flow_mod(datapath, back_info, dst_port, src_port)#back path
                     self.logger.debug("inter_link flow install")
         if len(path) > 1:
             # the last flow entry: tor -> host
@@ -378,7 +378,7 @@ class ShortestForwarding(app_manager.RyuApp):
 
             last_dp = datapaths[path[-1]]
             self.send_flow_mod(last_dp, flow_info, src_port, dst_port)
-            #self.send_flow_mod(last_dp, back_info, dst_port, src_port)#返回路径！！！修改下
+            #self.send_flow_mod(last_dp, back_info, dst_port, src_port)#back path
 
             # the first flow entry
             port_pair = self.get_port_pair_from_link(link_to_port,
@@ -388,7 +388,7 @@ class ShortestForwarding(app_manager.RyuApp):
                 return
             out_port = port_pair[0]
             self.send_flow_mod(first_dp, flow_info, in_port, out_port)
-            #self.send_flow_mod(first_dp, back_info, out_port, in_port)#返回路径！！！修改下
+            #self.send_flow_mod(first_dp, back_info, out_port, in_port)#back path
             self.send_packet_out(first_dp, buffer_id, in_port, out_port, data)
 
         # src and dst on the same datapath
