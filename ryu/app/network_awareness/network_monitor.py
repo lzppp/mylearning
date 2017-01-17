@@ -192,6 +192,7 @@ class NetworkMonitor(app_manager.RyuApp):
                     graph[src_dpid][dst_dpid]['bw'] = bandwidth
                 else:
                     graph[src_dpid][dst_dpid]['bw'] = 0
+            print ('create bw finished!!')
             return graph
         except:
             self.logger.info("Create bw graph exception")
