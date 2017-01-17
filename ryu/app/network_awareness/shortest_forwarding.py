@@ -41,6 +41,7 @@ import network_delay_detector
 import sql
 import sa
 import copy
+import random
 
 CONF = cfg.CONF
 GPATH = '/home/mini/tempmessage/switchinfo.db'
