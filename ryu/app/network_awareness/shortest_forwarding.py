@@ -504,17 +504,16 @@ class ShortestForwarding(app_manager.RyuApp):
 
 
             print "TBD"
-            """
-            elif self.flow_infome[(ip_src , ip_dst)].setdefault('path')!=None:
-                path = self.flow_infome[(ip_src , ip_dst)]['path']
-                self.logger.info("[PATH]%s<-->%s: %s" % (ip_src, ip_dst, path))
-                flow_info = (eth_type, ip_src, ip_dst, in_port)
-                # install flow entries to datapath along side the path.
-                self.install_flow(  self.datapaths,
+        elif self.flow_infome[(ip_src , ip_dst)].setdefault('path')!=None:
+            path = self.flow_infome[(ip_src , ip_dst)]['path']
+            self.logger.info("have path:[PATH]%s<-->%s: %s" % (ip_src, ip_dst, path))
+            flow_info = (eth_type, ip_src, ip_dst, in_port)
+            # install flow entries to datapath along side the path.
+            self.install_flow(  self.datapaths,
                                     self.awareness.link_to_port,
                                     self.awareness.access_table, path,
                                     flow_info, msg.buffer_id, msg.data)
-            """
+            
         else:
             if result:
                 src_sw, dst_sw = result[0], result[1]
