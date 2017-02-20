@@ -45,6 +45,13 @@ import copy
 import random
 import setting
 
+from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+from SocketServer import StreamRequestHandler
+import io,shutil  
+import urllib,time
+import getopt,string
+import logging
+
 CONF = cfg.CONF
 GPATH = '/home/mini/tempmessage/switchinfo.db'
 FPATH = '/home/mini/tempmessage/flow.db'
@@ -79,8 +86,7 @@ class ShortestForwarding(app_manager.RyuApp):
     _CONTEXTS = {
         "network_awareness": network_awareness.NetworkAwareness,
         "network_monitor": network_monitor.NetworkMonitor,
-        "network_delay_detector": network_delay_detector.NetworkDelayDetector,
-        "server":httphd.startserver}
+        "network_delay_detector": network_delay_detector.NetworkDelayDetector}
 
     WEIGHT_MODEL = {'hop': 'weight', 'delay': "delay", "bw": "bw"}
 
@@ -90,7 +96,6 @@ class ShortestForwarding(app_manager.RyuApp):
         self.awareness = kwargs["network_awareness"]
         self.monitor = kwargs["network_monitor"]
         self.delay_detector = kwargs["network_delay_detector"]
-        self.doingip = kwargs["server"].access
         self.datapaths = {}
         self.weight = self.WEIGHT_MODEL[CONF.weight]
         self.vip = {}
@@ -201,6 +206,9 @@ class ShortestForwarding(app_manager.RyuApp):
         """
             read the flow table in flow.db that is an vip list
         """
+        mys = httphd.MyRequestHandler
+        server = HTTPServer(('', 8000), mys)
+        print "start httphd"
         while self.busy != True:
             if len(self.doingip) != 0:
                 print self.doingip
