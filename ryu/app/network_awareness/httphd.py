@@ -17,9 +17,6 @@ class startserver(object):
 		
 
 class MyRequestHandler(BaseHTTPRequestHandler):
-    conn = sql.get_conn(GPATH)
-    sql.drop_table(conn , 'flow')
-    sql.create_table(conn , TABLEFLOW)
     assess = set()
     logging.basicConfig(level=logging.DEBUG,
                 format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
@@ -43,15 +40,6 @@ class MyRequestHandler(BaseHTTPRequestHandler):
             datas = transDicts(datas)#
             address = self.client_address[0]
             if datas.has_key('buffer'):
-                if address in  self.assess:
-                    _sql = 'UPDATE flow SET buffer = ? WHERE ip_src = ? '
-                    data = [(datas['buffer'],address)]
-                    sql.update(self.conn , _sql , data)
-                else :
-                    _sql = '''INSERT INTO flow (ip_src , buffer) values (?, ?)'''
-                    data = [(address,datas['buffer'],)]
-                    sql.save(self.conn, _sql, data)
-                    self.assess.add(address)
                 logging.debug("ip_src: %s,canplay: %s , buffer :%s\n" %(address , datas['buffer'] , datas['buffer']))
             self.send_response(200)  
         if type==2:
@@ -66,16 +54,16 @@ class MyRequestHandler(BaseHTTPRequestHandler):
             if params['buffer']:
                 
                 logging.debug("ip_src: %s , canplay %s ,  buffer :%s\n" %(address , params['canplay'] , params['buffer'])) 
-                if float(params['canplay']) < 20 and float(params['buffer']) < 1:
-                    #alert
-                    if address in  self.assess:
-                        _sql = 'SELECT * from flow'
-                        re = sql.fetchall(self.conn , _sql)
-                    else :
-                        _sql = '''INSERT INTO flow (ip_src , buffer , time) values (?, ? ,?)'''
-                        data = [(address,params['buffer'] , 1)]
-                        sql.save(self.conn, _sql, data)
-                        self.assess.add(address)
+                # if float(params['canplay']) < 20 and float(params['buffer']) < 1:
+                #     #alert
+                #     if address in  self.assess:
+                #         _sql = 'SELECT * from flow'
+                #         re = sql.fetchall(self.conn , _sql)
+                #     else :
+                #         _sql = '''INSERT INTO flow (ip_src , buffer , time) values (?, ? ,?)'''
+                #         data = [(address,params['buffer'] , 1)]
+                #         sql.save(self.conn, _sql, data)
+                #         self.assess.add(address)
             self.send_response(200)    
 
 def transDicts(params):
