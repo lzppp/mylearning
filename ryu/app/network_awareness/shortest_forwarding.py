@@ -206,15 +206,25 @@ class ShortestForwarding(app_manager.RyuApp):
         """
             read the flow table in flow.db that is an vip list
         """
-        mys = httphd.MyRequestHandler
-        server = HTTPServer(('', 8000), mys)
-        print "start httphd"
         while self.busy != True:
-            if len(mys.assess) != 0:
-                print self.doingip
+            
+            fetchall_sql = '''SELECT * FROM flow'''
+            result = sql.fetchall(self.flowconn , fetchall_sql)
+            if result == None:
+                pass
+            else:
+                for r in result:
+                    if r[1] in self.doing_list:
+                        pass
+                    else:
+                        self.vip[r[1]] = r[3]
+
+                self.busy = True
                 flow_in_road = copy.deepcopy(self.monitor.flow_in_road)
                 print flow_in_road
-                self.qoe()
+                self.qoe(r[1])
+                print self.vip
+                 hub.sleep(60)
             hub.sleep(setting.DELAY_DETECTING_PERIOD)
 
     def set_weight_mode(self, weight):
