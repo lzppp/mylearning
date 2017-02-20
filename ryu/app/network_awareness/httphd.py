@@ -8,13 +8,12 @@ import logging
 
 LOG_FILE = '/home/mini/tempmessage/log.out'
 class startserver(object):
-	"""docstring for startserver"""
-	def __init__(self):
-		try:
-        	print "start"
-        	server = HTTPServer(('', 8000), MyRequestHandler)
-        	print 'started httpserver...'
-        	server.serve_forever()
+    """docstring for startserver"""
+    def __init__(self):
+        print "start"
+        server = HTTPServer(('', 8000), MyRequestHandler)
+        print 'started httpserver...'
+        server.serve_forever()
 		
 
 class MyRequestHandler(BaseHTTPRequestHandler):
