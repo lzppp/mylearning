@@ -213,16 +213,10 @@ class ShortestForwarding(app_manager.RyuApp):
             if result == None:
                 pass
             else:
-                for r in result:
-                    if r[1] in self.doing_list:
-                        pass
-                    else:
-                        self.vip[r[1]] = r[3]
-
                 self.busy = True
                 flow_in_road = copy.deepcopy(self.monitor.flow_in_road)
                 print flow_in_road
-                self.qoe(r[1])
+                self.qoe()
                 print self.vip
                 hub.sleep(60)
             hub.sleep(setting.DELAY_DETECTING_PERIOD)
