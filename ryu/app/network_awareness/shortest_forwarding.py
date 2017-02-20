@@ -90,6 +90,7 @@ class ShortestForwarding(app_manager.RyuApp):
         self.awareness = kwargs["network_awareness"]
         self.monitor = kwargs["network_monitor"]
         self.delay_detector = kwargs["network_delay_detector"]
+        self.doingip = kwargs["server"].access
         self.datapaths = {}
         self.weight = self.WEIGHT_MODEL[CONF.weight]
         self.vip = {}
@@ -105,7 +106,7 @@ class ShortestForwarding(app_manager.RyuApp):
         sql.create_table(self.conn , TABLEFLOW)
 
         self.vip_thread = hub.spawn(self._vip)
-    def qoe(self , doingip):
+    def qoe(self):
         """
             todo!!!!! 
         """
@@ -194,32 +195,18 @@ class ShortestForwarding(app_manager.RyuApp):
                                       flow_info, self.flow_infome[key]['buffer_id'], None)
 
 
-        delete_sql = 'DELETE FROM flow WHERE ip_src = ? '
-        data = (doingip)
-        sql.delete(self.flowconn, delete_sql, data)
+        
         self.busy = False
     def _vip(self):
         """
             read the flow table in flow.db that is an vip list
         """
         while self.busy != True:
-            
-            fetchall_sql = '''SELECT * FROM flow'''
-            result = sql.fetchall(self.flowconn , fetchall_sql)
-            if result == None:
-                pass
-            else:
-                for r in result:
-                    if r[1] in self.doing_list:
-                        pass
-                    else:
-                        self.vip[r[1]] = r[3]
-
-                self.busy = True
+            if len(self.doingip) != 0:
+                print self.doingip
                 flow_in_road = copy.deepcopy(self.monitor.flow_in_road)
                 print flow_in_road
-                self.qoe(r[1])
-                print self.vip
+                self.qoe()
             hub.sleep(setting.DELAY_DETECTING_PERIOD)
 
     def set_weight_mode(self, weight):

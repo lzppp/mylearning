@@ -12,6 +12,7 @@ class startserver(object):
     def __init__(self):
         print "start"
         server = HTTPServer(('', 8000), MyRequestHandler)
+        self.assess = server.assess
         print 'started httpserver...'
         server.serve_forever()
 		
@@ -54,16 +55,15 @@ class MyRequestHandler(BaseHTTPRequestHandler):
             if params['buffer']:
                 
                 logging.debug("ip_src: %s , canplay %s ,  buffer :%s\n" %(address , params['canplay'] , params['buffer'])) 
-                # if float(params['canplay']) < 20 and float(params['buffer']) < 1:
-                #     #alert
-                #     if address in  self.assess:
-                #         _sql = 'SELECT * from flow'
-                #         re = sql.fetchall(self.conn , _sql)
-                #     else :
-                #         _sql = '''INSERT INTO flow (ip_src , buffer , time) values (?, ? ,?)'''
-                #         data = [(address,params['buffer'] , 1)]
-                #         sql.save(self.conn, _sql, data)
-                #         self.assess.add(address)
+                if float(params['canplay']) < 20 and float(params['buffer']) < 1:
+                    #alert
+                    if address in  self.assess:
+                    	pass
+                    else :
+                        _sql = '''INSERT INTO flow (ip_src , buffer , time) values (?, ? ,?)'''
+                        data = [(address,params['buffer'] , 1)]
+                        sql.save(self.conn, _sql, data)
+                        self.assess.add(address)
             self.send_response(200)    
 
 def transDicts(params):
