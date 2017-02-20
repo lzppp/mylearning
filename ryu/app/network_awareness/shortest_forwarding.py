@@ -108,7 +108,7 @@ class ShortestForwarding(app_manager.RyuApp):
         """
             todo!!!!! 
         """
-        if self.busy = True:
+        if self.busy == True:
             '''
                 do QoE APP AWARE
             
