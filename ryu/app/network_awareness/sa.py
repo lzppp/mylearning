@@ -39,10 +39,7 @@ class recalculatebySA(Annealer):
         # Attempt moves to new states
         while step < self.steps and not self.user_exit:
             step += 1
-            if step / self.steps > 0.5:
-                T = self.Tmax * math.exp(2 *Tfactor * step / self.steps)
-            else :
-                T = self.Tmax * math.exp(Tfactor * step / self.steps)
+            T = self.Tmax * math.exp(Tfactor * step / self.steps)
             self.move()
             E = self.energy()
             dE = E - prevEnergy
@@ -76,15 +73,6 @@ class recalculatebySA(Annealer):
         # Return best state and energy
         return self.best_state, self.best_energy
 
-    def update(self, *args, **kwargs):
-        """Wrapper for internal update.
-
-        If you override the self.update method,
-        you can chose to call the self.default_update method
-        from your own Annealer.
-        """
-        #a bug in github simanneal program
-        self.default_update(*args, **kwargs)
     def distance(self , tpath ,graph):
         '''
             cost+=graph[][]['cost']
