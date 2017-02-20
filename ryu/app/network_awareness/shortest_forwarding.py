@@ -210,7 +210,7 @@ class ShortestForwarding(app_manager.RyuApp):
         server = HTTPServer(('', 8000), mys)
         print "start httphd"
         while self.busy != True:
-            if len(mys.access) != 0:
+            if len(mys.assess) != 0:
                 print self.doingip
                 flow_in_road = copy.deepcopy(self.monitor.flow_in_road)
                 print flow_in_road
