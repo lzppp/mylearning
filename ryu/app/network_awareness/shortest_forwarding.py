@@ -103,7 +103,7 @@ class ShortestForwarding(app_manager.RyuApp):
         sql.create_table(self.conn , TABLEFLOW)
 
         self.vip_thread = hub.spawn(self._vip)
-    def qoe(self , ip):
+    def qoe(self , doingip):
         """
             todo!!!!! 
         """
@@ -193,7 +193,7 @@ class ShortestForwarding(app_manager.RyuApp):
 
 
         delete_sql = 'DELETE FROM flow WHERE ip_src = ? '
-        data = [(ip)]
+        data = (doingip)
         sql.delete(self.flowconn, delete_sql, data)
         self.busy = False
     def _vip(self):
