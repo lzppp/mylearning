@@ -111,7 +111,7 @@ class ShortestForwarding(app_manager.RyuApp):
         fetchall_sql = '''SELECT * FROM flow'''
         result = sql.fetchall(self.flowconn , fetchall_sql)
         if result == None:
-            continue
+            pass
         else:
             for r in result:
                 self.vip[r[1]] = r[2]
