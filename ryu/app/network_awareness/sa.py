@@ -3,8 +3,88 @@ import math
 import random
 from simanneal import Annealer
 import networkx as nx
+import time
 
 class recalculatebySA(Annealer):
+    def anneal(self):
+        """Minimizes the energy of a system by simulated annealing.
+
+        Parameters
+        state : an initial arrangement of the system
+
+        Returns
+        (state, energy): the best state and energy found.
+        """
+        step = 0
+        self.start = time.time()
+
+        # Precompute factor for exponential cooling from Tmax to Tmin
+        if self.Tmin <= 0.0:
+            raise Exception('Exponential cooling requires a minimum "\
+                "temperature greater than zero.')
+        Tfactor = -math.log(self.Tmax / self.Tmin)
+
+        # Note initial state
+        T = self.Tmax
+        E = self.energy()
+        prevState = self.copy_state(self.state)
+        prevEnergy = E
+        self.best_state = self.copy_state(self.state)
+        self.best_energy = E
+        trials, accepts, improves = 0, 0, 0
+        if self.updates > 0:
+            updateWavelength = self.steps / self.updates
+            self.update(step, T, E, None, None)
+
+        # Attempt moves to new states
+        while step < self.steps and not self.user_exit:
+            step += 1
+            if step / self.steps > 0.5:
+                T = self.Tmax * math.exp(2 *Tfactor * step / self.steps)
+            else :
+                T = self.Tmax * math.exp(Tfactor * step / self.steps)
+            self.move()
+            E = self.energy()
+            dE = E - prevEnergy
+            trials += 1
+            if dE > 0.0 and math.exp(-dE / T) < random.random():
+                # Restore previous state
+                self.state = self.copy_state(prevState)
+                E = prevEnergy
+            else:
+                # Accept new state and compare to best state
+                accepts += 1
+                if dE < 0.0:
+                    improves += 1
+                prevState = self.copy_state(self.state)
+                prevEnergy = E
+                if E < self.best_energy:
+                    self.best_state = self.copy_state(self.state)
+                    self.best_energy = E
+            if self.updates > 1:
+                if (step // updateWavelength) > ((step - 1) // updateWavelength):
+                    self.update(
+                        step, T, E, accepts / trials, improves / trials)
+                    trials, accepts, improves = 0, 0, 0
+
+        # line break after progress output
+        print('')
+
+        self.state = self.copy_state(self.best_state)
+        if self.save_state_on_exit:
+            self.save_state()
+        # Return best state and energy
+        return self.best_state, self.best_energy
+
+    def update(self, *args, **kwargs):
+        """Wrapper for internal update.
+
+        If you override the self.update method,
+        you can chose to call the self.default_update method
+        from your own Annealer.
+        """
+        #a bug in github simanneal program
+        self.default_update(*args, **kwargs)
     def distance(self , tpath ,graph):
         '''
             cost+=graph[][]['cost']
@@ -54,8 +134,7 @@ class recalculatebySA(Annealer):
             self.state[flowkey] = self.path[flowkey][random.randint(0, len(self.path[flowkey]) - 1)]
         '''
         
-        #'''
-        #random select a key
+        #'''random select a key better
         li = list(self.flow.keys())
         flowkey = li[random.randint(0, len(li) - 1)]
         #random select a path
@@ -78,7 +157,21 @@ class recalculatebySA(Annealer):
                 return e
 
         return e
-
+def read():
+    file = open('d:\\data.txt','r')
+    text = file.readlines()
+    flow = {}
+    for i in range(0,len(text)):
+        text[i] = text[i][0:len(text[i])-1]
+        tmp = text[i].split(',')
+        src = int(tmp[0].split(':')[1])
+        dst = int(tmp[1].split(':')[1])
+        bw = int(tmp[2].split(':')[1])
+        ipsrc = "10.0.0."+tmp[0].split(':')[1]
+        ipdst = "10.0.0."+tmp[1].split(':')[1]
+        flow[(ipsrc,ipdst)] = {'ip_src':ipsrc,'ip_dst':ipdst,'src':src,'dst':dst,'bw':bw} 
+    file.close()
+    return flow
 if __name__ == '__main__':
     '''
         test function
@@ -93,28 +186,32 @@ if __name__ == '__main__':
     g[1][3]['delay'] = 2
     g[2][4]['delay'] = 2
     g[3][4]['delay'] = 2
-    g[1][2]['bw'] = 2
-    g[1][3]['bw'] = 2
-    g[2][4]['bw'] = 2
-    g[3][4]['bw'] = 2
+    g[1][2]['bw'] = 100
+    g[1][3]['bw'] = 100
+    g[2][4]['bw'] = 100
+    g[3][4]['bw'] = 100
     g.add_edge(2,3,weight=1)
     g[2][3]['delay'] = 3
-    g[2][3]['bw'] = 1
+    g[2][3]['bw'] = 100
     #init some flows
     flow = {}
     path = {}
     selectpath = {}
     app = []
+   
     '''
     for a in nx.shortest_simple_paths(g, source=1,target=4, weight='cost'):
         app.append(a)
     print (app)
-    '''
+    
     flow[('10.0.0.1','10.0.0.4')] = {'ip_src':'10.0.0.1','ip_dst':'10.0.0.4','src':1,'dst':4,'bw':1} 
     flow[('10.0.0.2','10.0.0.3')] = {'ip_src':'10.0.0.2','ip_dst':'10.0.0.3','src':2,'dst':3,'bw':1} 
     flow[('10.0.0.4','10.0.0.2')] = {'ip_src':'10.0.0.4','ip_dst':'10.0.0.2','src':4,'dst':2,'bw':1} 
     flow[('10.0.0.4','10.0.0.1')] = {'ip_src':'10.0.0.4','ip_dst':'10.0.0.1','src':4,'dst':1,'bw':1} 
     flow[('10.0.0.3','10.0.0.4')] = {'ip_src':'10.0.0.3','ip_dst':'10.0.0.4','src':3,'dst':4,'bw':1} 
+    
+    '''
+    flow = read()
     for flowkey in flow.keys():
             '''
                 generator must change to list or dict
@@ -130,6 +227,10 @@ if __name__ == '__main__':
     tsp.path = path
     tsp.flow = flow
     tsp.copy_strategy = "method"
+    tsp.TMax = 350000
+    tsp.Tmin = 1
+    tsp.steps = 2400
+    # tsp.updates = 25
     #test bwcalculate
     '''
     bw = {}
@@ -143,7 +244,16 @@ if __name__ == '__main__':
 
     #print (result)
     '''
+    begin = time.time()
+    
+    # p = tsp.auto(0.001)
+    # print (p)
+    # tsp.TMax = p['tmax']
+    # tsp.Tmin = p['tmin']
+    # tsp.steps = p['steps']
+    bsa = time.time()
+    print ( "ger time %f"%(bsa - begin))
     state, e = tsp.anneal()
-    print (selectpath)
     print ("cost %d" % e )
     print (state)
+    print ( "time %f"%(time.time() - bsa))

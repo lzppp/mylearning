@@ -2,6 +2,7 @@
 *.db
 *.sh
 *~
+*.state
 *.egg-info/
 build/
 dist/
