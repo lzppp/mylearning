@@ -193,8 +193,7 @@ class ShortestForwarding(app_manager.RyuApp):
 
 
 
-        hub.sleep(setting.DELAY_DETECTING_PERIOD)
-
+        self.busy = False
     def _vip(self):
         """
             read the flow table in flow.db that is an vip list
@@ -211,9 +210,10 @@ class ShortestForwarding(app_manager.RyuApp):
                         pass
                     else:
                         self.vip[r[1]] = r[3]
-                        self.doing_list.add(r[1])
 
                 self.busy = True
+                flow_in_road = copy.deepcopy(self.monitor.flow_in_road)
+                print flow_in_road
                 self.qoe()
                 print self.vip
             hub.sleep(setting.DELAY_DETECTING_PERIOD)
