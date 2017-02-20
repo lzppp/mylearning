@@ -110,9 +110,12 @@ class ShortestForwarding(app_manager.RyuApp):
         """
         fetchall_sql = '''SELECT * FROM flow'''
         result = sql.fetchall(self.flowconn , fetchall_sql)
-        for r in result:
-            self.vip[r[1]] = r[2]
-        print self.vip
+        if result == None:
+            continue
+        else:
+            for r in result:
+                self.vip[r[1]] = r[2]
+            print self.vip
         hub.sleep(setting.DELAY_DETECTING_PERIOD)
 
     def set_weight_mode(self, weight):
