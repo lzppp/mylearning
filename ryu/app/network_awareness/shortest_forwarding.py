@@ -78,7 +78,8 @@ class ShortestForwarding(app_manager.RyuApp):
     _CONTEXTS = {
         "network_awareness": network_awareness.NetworkAwareness,
         "network_monitor": network_monitor.NetworkMonitor,
-        "network_delay_detector": network_delay_detector.NetworkDelayDetector}
+        "network_delay_detector": network_delay_detector.NetworkDelayDetector,
+        "server":httphd.startserver}
 
     WEIGHT_MODEL = {'hop': 'weight', 'delay': "delay", "bw": "bw"}
 
@@ -107,7 +108,7 @@ class ShortestForwarding(app_manager.RyuApp):
         """
             todo!!!!! 
         """
-        if True:
+        if self.busy = True:
             '''
                 do QoE APP AWARE
             
