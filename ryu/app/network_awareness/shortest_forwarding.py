@@ -186,12 +186,15 @@ class ShortestForwarding(app_manager.RyuApp):
             safunction.flow = flow_in_road
             safunction.copy_strategy = "method"
             print ("----------------------------start sa-------------------------------")
+            safunction.TMax = 350000
+            safunction.Tmin = 1
+            safunction.steps = 2400
             state , e = safunction.anneal()
             for key in state.keys():
                 if state[key] != self.flow_infome[key]['path']:
                     #resend flow table
                     self.logger.info("[PATH]%s<-->%s: %s" % (key[0], key[1], state[key]))
-                    self.flow_infome['path'] = state[key]
+                    self.flow_infome[key]['path'] = state[key]
                     flow_info = (self.flow_infome[key]['eth_type'],
                                  key[0], key[1], self.flow_infome[key]['in_port'])
                     self.install_flow(self.datapaths,
@@ -217,8 +220,7 @@ class ShortestForwarding(app_manager.RyuApp):
                 flow_in_road = copy.deepcopy(self.monitor.flow_in_road)
                 print flow_in_road
                 self.qoe()
-                print self.vip
-                hub.sleep(60)
+                hub.sleep(10)
             hub.sleep(setting.DELAY_DETECTING_PERIOD)
 
     def set_weight_mode(self, weight):
