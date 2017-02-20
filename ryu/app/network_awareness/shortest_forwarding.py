@@ -93,7 +93,8 @@ class ShortestForwarding(app_manager.RyuApp):
         self.vip = {}
         self.conn = sql.get_conn(GPATH)
         self.flowconn = sql.get_conn(FPATH)
- 
+        self.busy = False
+        self.doing_list = set()
         self.flow_infome = {}
 
         sql.drop_table(self.conn , 'switch')
@@ -192,20 +193,28 @@ class ShortestForwarding(app_manager.RyuApp):
 
 
 
-            print "TBD"
+        hub.sleep(setting.DELAY_DETECTING_PERIOD)
 
     def _vip(self):
         """
             read the flow table in flow.db that is an vip list
         """
         while True:
+            
             fetchall_sql = '''SELECT * FROM flow'''
             result = sql.fetchall(self.flowconn , fetchall_sql)
             if result == None:
                 pass
             else:
                 for r in result:
-                    self.vip[r[1]] = r[2]
+                    if r[1] in doing_list:
+                        pass
+                    else:
+                        self.vip[r[1]] = r[3]
+                        self.doing_list.add(r[1])
+
+                self.busy = True
+                self.qoe()
                 print self.vip
             hub.sleep(setting.DELAY_DETECTING_PERIOD)
 
