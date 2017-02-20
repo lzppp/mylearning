@@ -199,7 +199,7 @@ class ShortestForwarding(app_manager.RyuApp):
         """
             read the flow table in flow.db that is an vip list
         """
-        while !self.busy:
+        while self.busy != True:
             
             fetchall_sql = '''SELECT * FROM flow'''
             result = sql.fetchall(self.flowconn , fetchall_sql)
