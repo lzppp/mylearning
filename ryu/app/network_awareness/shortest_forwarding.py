@@ -199,7 +199,7 @@ class ShortestForwarding(app_manager.RyuApp):
         """
             read the flow table in flow.db that is an vip list
         """
-        while True:
+        while !self.busy:
             
             fetchall_sql = '''SELECT * FROM flow'''
             result = sql.fetchall(self.flowconn , fetchall_sql)
@@ -207,7 +207,7 @@ class ShortestForwarding(app_manager.RyuApp):
                 pass
             else:
                 for r in result:
-                    if r[1] in doing_list:
+                    if r[1] in self.doing_list:
                         pass
                     else:
                         self.vip[r[1]] = r[3]
