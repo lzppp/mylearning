@@ -35,12 +35,12 @@ class MyRequestHandler(BaseHTTPRequestHandler):
     def process(self,type):
         
         content =""
-        if type==1:#post方法，接收post参数
+        if type==1:
             print 'read\n'
             datas = self.rfile.read(int(self.headers['content-length']))
             
-            datas = urllib.unquote(datas).decode("utf-8", 'ignore')#指定编码方式
-            datas = transDicts(datas)#将参数转换为字典
+            datas = urllib.unquote(datas).decode("utf-8", 'ignore')
+            datas = transDicts(datas)#
             address = self.client_address[0]
             if datas.has_key('buffer'):
                 if address in  self.assess:
