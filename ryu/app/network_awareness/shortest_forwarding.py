@@ -516,6 +516,7 @@ class ShortestForwarding(app_manager.RyuApp):
                                     self.awareness.access_table, path,
                                     flow_info, msg.buffer_id, msg.data)
         '''    
+        
         else:
             if result:
                 src_sw, dst_sw = result[0], result[1]
