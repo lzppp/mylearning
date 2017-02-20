@@ -504,7 +504,7 @@ class ShortestForwarding(app_manager.RyuApp):
 
 
             print "TBD"
-        '''
+            '''
         #quick get path
         elif self.flow_infome[(ip_src , ip_dst)].setdefault('path')!=None:
             path = self.flow_infome[(ip_src , ip_dst)]['path']
@@ -515,8 +515,8 @@ class ShortestForwarding(app_manager.RyuApp):
                                     self.awareness.link_to_port,
                                     self.awareness.access_table, path,
                                     flow_info, msg.buffer_id, msg.data)
-        '''    
-        
+            '''    
+
         else:
             if result:
                 src_sw, dst_sw = result[0], result[1]
