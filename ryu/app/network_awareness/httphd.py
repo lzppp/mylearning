@@ -12,7 +12,7 @@ class startserver(object):
     def __init__(self):
         print "start"
         server = HTTPServer(('', 8000), MyRequestHandler)
-        self.assess = server.assess
+        self.assess = MyRequestHandler.assess
         print 'started httpserver...'
         server.serve_forever()
 		
