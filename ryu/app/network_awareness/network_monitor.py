@@ -193,7 +193,6 @@ class NetworkMonitor(app_manager.RyuApp):
                     graph[src_dpid][dst_dpid]['bw'] = bandwidth
                 else:
                     graph[src_dpid][dst_dpid]['bw'] = 0
-            print ('create bw finished!!')
             return graph
         except:
             self.logger.info("Create bw graph exception")
@@ -276,7 +275,7 @@ class NetworkMonitor(app_manager.RyuApp):
             if key[1] != '224.0.0.251' or key[2] !='224.0.0.251':
                 if self.flow_in_road.has_key((key[2] , key[1])) == False:
                     self.flow_in_road[(key[2] , key[1])]={}
-                self.flow_in_road[(key[2] , key[1])]['bw'] = speed / 10**3
+                self.flow_in_road[(key[2] , key[1])]['bw'] = speed / 8#BW:Mbit/s
                 self.flow_in_road[(key[2] , key[1])]['in_port'] = key[0]
 
     @set_ev_cls(ofp_event.EventOFPPortStatsReply, MAIN_DISPATCHER)
