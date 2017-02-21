@@ -119,12 +119,12 @@ class NetworkAwareness(app_manager.RyuApp):
             Get host location info:(datapath, port) according to host ip.
         """
         if host_ip != None and netaddr.IPAddress(host_ip) not in netaddr.IPNetwork("10.0.0.0/8"):
-            host_ip = "10.0.0.5"
+            host_ip = "10.0.0.9"
         '''
         /\
         |
         |
-        NAT to 10.0.0.5
+        NAT to 10.0.0.9
         '''
         for key in self.access_table.keys():
             if self.access_table[key][0] == host_ip:
