@@ -315,7 +315,7 @@ class ShortestForwarding(app_manager.RyuApp):
         '''
             ???
         '''
-        if dst_ip != None and netaddr.IPAddress(dst_ip) not in netaddr.IPNetwork("10.0.0.0/8"):
+        if dst_ip != None and (netaddr.IPAddress(dst_ip) not in netaddr.IPNetwork("10.0.0.0/8") or netaddr.IPAddress(dst_ip) not in netaddr.IPNetwork("224.0.0.0/8")):
             dst_ip = "10.0.0.9"
             '''
             /\
