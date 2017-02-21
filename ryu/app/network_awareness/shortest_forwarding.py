@@ -219,6 +219,7 @@ class ShortestForwarding(app_manager.RyuApp):
                 self.busy = True
                 flow_in_road = copy.deepcopy(self.monitor.flow_in_road)
                 print flow_in_road
+                print self.awareness.graph[1][2]['bw']
                 self.qoe()
                 hub.sleep(10)
             hub.sleep(setting.DELAY_DETECTING_PERIOD)

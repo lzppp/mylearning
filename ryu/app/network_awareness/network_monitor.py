@@ -275,7 +275,7 @@ class NetworkMonitor(app_manager.RyuApp):
             if key[1] != '224.0.0.251' or key[2] !='224.0.0.251':
                 if self.flow_in_road.has_key((key[2] , key[1])) == False:
                     self.flow_in_road[(key[2] , key[1])]={}
-                self.flow_in_road[(key[2] , key[1])]['bw'] = speed *8 / 10**3 #BW:Mbit/s
+                self.flow_in_road[(key[2] , key[1])]['bw'] = max(speed *8 / 10**3 , 0) #BW:Mbit/s
                 self.flow_in_road[(key[2] , key[1])]['in_port'] = key[0]
 
     @set_ev_cls(ofp_event.EventOFPPortStatsReply, MAIN_DISPATCHER)
