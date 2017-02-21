@@ -227,7 +227,7 @@ class NetworkMonitor(app_manager.RyuApp):
 
     def _get_free_bw(self, capacity, speed):
         # BW:Mbit/s
-        return max(capacity / 10**3 - speed * 8, 0)
+        return max(capacity / 10**3, 0)#i want the capacity
 
     def _get_time(self, sec, nsec):
         return sec + nsec / (10 ** 9)
@@ -275,7 +275,7 @@ class NetworkMonitor(app_manager.RyuApp):
             if key[1] != '224.0.0.251' or key[2] !='224.0.0.251':
                 if self.flow_in_road.has_key((key[2] , key[1])) == False:
                     self.flow_in_road[(key[2] , key[1])]={}
-                self.flow_in_road[(key[2] , key[1])]['bw'] = speed / 8#BW:Mbit/s
+                self.flow_in_road[(key[2] , key[1])]['bw'] = speed *8 #BW:Mbit/s
                 self.flow_in_road[(key[2] , key[1])]['in_port'] = key[0]
 
     @set_ev_cls(ofp_event.EventOFPPortStatsReply, MAIN_DISPATCHER)
