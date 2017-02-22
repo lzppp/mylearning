@@ -175,6 +175,11 @@ class ShortestForwarding(app_manager.RyuApp):
             selectpath = {}
             for flowkey in flow_in_road.keys():
                 pathset[flowkey] = []
+                if flowkey[0] == "202.116.7.119" or flowkey[1] == "202.116.7.119":
+                    pathset[flowkey].append(nx.sshortest_path(self.awareness.graph, source=flow_in_road[flowkey]['src'],
+                                                 target=flow_in_road[flowkey]['dst'], weight='delay'))
+                    continue
+                    #only get sp for qoe
                 for a in nx.shortest_simple_paths(self.awareness.graph, source=flow_in_road[flowkey]['src'],
                                                  target=flow_in_road[flowkey]['dst'], weight='delay'):
                     pathset[flowkey].append(a)
@@ -536,7 +541,7 @@ class ShortestForwarding(app_manager.RyuApp):
         #quick get path
         if self.flow_infome[(ip_src , ip_dst)].setdefault('path')!=None:
             path = self.flow_infome[(ip_src , ip_dst)]['path']
-            self.logger.info("have path:[PATH]%s<-->%s: %s" % (ip_src, ip_dst, path))
+            #self.logger.info("have path:[PATH]%s<-->%s: %s" % (ip_src, ip_dst, path))
             flow_info = (eth_type, ip_src, ip_dst, in_port)
             # install flow entries to datapath along side the path.
             self.install_flow(  self.datapaths,
