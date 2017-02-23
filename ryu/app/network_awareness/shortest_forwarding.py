@@ -175,7 +175,7 @@ class ShortestForwarding(app_manager.RyuApp):
             selectpath = {}
             for flowkey in flow_in_road.keys():
                 pathset[flowkey] = []
-                if flowkey[0] == "202.116.7.119" or flowkey[1] == "202.116.7.119":
+                if flowkey[0] == "202.116.7.106" or flowkey[1] == "202.116.7.106":
                     pathset[flowkey].append(nx.sshortest_path(self.awareness.graph, source=flow_in_road[flowkey]['src'],
                                                  target=flow_in_road[flowkey]['dst'], weight='delay'))
                     continue
