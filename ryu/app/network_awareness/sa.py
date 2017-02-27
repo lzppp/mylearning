@@ -53,11 +53,11 @@ class recalculatebySA(Annealer):
             E = self.energy()
             dE = E - prevEnergy
             trials += 1
-
+            tt += 1
             P = math.exp(-dE / T) < random.random()#protable of stay , T up P down
             if dE > 0.0 and P:
                 # Restore previous state
-                tt += 1
+                #tt += 1
                 self.state = self.copy_state(prevState)
                 E = prevEnergy
                 reward += 1
@@ -66,11 +66,11 @@ class recalculatebySA(Annealer):
                 accepts += 1
                 if dE < 0.0:
                     improves += 1
-                tt = 0
+                
                 prevState = self.copy_state(self.state)
                 prevEnergy = E
                 if E < self.best_energy:
-                    reward = 0
+                    tt = 0
                     self.best_state = self.copy_state(self.state)
                     self.best_energy = E
             if self.updates > 1:
@@ -231,7 +231,7 @@ if __name__ == '__main__':
     tsp.flow = flow
     tsp.copy_strategy = "method"
     tsp.TMax = 350000
-    tsp.Tmin = 10
+    tsp.Tmin = 100
     tsp.steps = 2400
     # tsp.updates = 25
     #test bwcalculate

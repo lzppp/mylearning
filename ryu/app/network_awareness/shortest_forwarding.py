@@ -232,7 +232,7 @@ class ShortestForwarding(app_manager.RyuApp):
             	if breakflag == True:
             		break
                 for dst in self.awareness.graph[src]:
-                	if delay = self.awareness.graph[src][dst]['delay'] > 0.5:
+                	if delay == self.awareness.graph[src][dst]['delay'] > 0.5:
                 		breakflag = True
                 		break
             if breakflag == True:
