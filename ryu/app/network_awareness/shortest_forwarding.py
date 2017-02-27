@@ -214,8 +214,9 @@ class ShortestForwarding(app_manager.RyuApp):
         """
             read the flow table in flow.db that is an vip list
         """
+        
         while self.busy != True:
-            
+            breakflag = False
             fetchall_sql = '''SELECT * FROM flow'''
             result = sql.fetchall(self.flowconn , fetchall_sql)
             if result == None:
@@ -227,6 +228,17 @@ class ShortestForwarding(app_manager.RyuApp):
                 print self.awareness.graph[1][2]['bw']
                 self.qoe()
                 hub.sleep(10)
+            for src in self.awareness.graph:
+            	if breakflag == True:
+            		break
+                for dst in self.awareness.graph[src]:
+                	if delay = self.awareness.graph[src][dst]['delay'] > 0.5:
+                		breakflag = True
+                		break
+            if breakflag == True:
+            	self.qoe()
+
+
             hub.sleep(setting.DELAY_DETECTING_PERIOD)
 
     def set_weight_mode(self, weight):

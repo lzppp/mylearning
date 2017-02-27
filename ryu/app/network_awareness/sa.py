@@ -6,6 +6,8 @@ import networkx as nx
 import time
 
 class recalculatebySA(Annealer):
+    upk = 1.1
+    upmax = 5
     def anneal(self):
         """Minimizes the energy of a system by simulated annealing.
 
@@ -29,9 +31,12 @@ class recalculatebySA(Annealer):
         E = self.energy()
         prevState = self.copy_state(self.state)
         prevEnergy = E
+        perT = T
+        tt = 0
         self.best_state = self.copy_state(self.state)
         self.best_energy = E
         trials, accepts, improves = 0, 0, 0
+        reward = 0
         if self.updates > 0:
             updateWavelength = self.steps / self.updates
             self.update(step, T, E, None, None)
@@ -39,23 +44,33 @@ class recalculatebySA(Annealer):
         # Attempt moves to new states
         while step < self.steps and not self.user_exit:
             step += 1
-            T = self.Tmax * math.exp(Tfactor * step / self.steps)
+            
+            T = self.Tmax * math.exp(Tfactor * step / self.steps) * self.Tmin / self.Tmax#* (self.steps - step + 1) / self.steps#
+            if tt != 0:
+                 T = T * (self.upk**tt)
+            perT = T
             self.move()
             E = self.energy()
             dE = E - prevEnergy
             trials += 1
-            if dE > 0.0 and math.exp(-dE / T) < random.random():
+
+            P = math.exp(-dE / T) < random.random()#protable of stay , T up P down
+            if dE > 0.0 and P:
                 # Restore previous state
+                tt += 1
                 self.state = self.copy_state(prevState)
                 E = prevEnergy
+                reward += 1
             else:
                 # Accept new state and compare to best state
                 accepts += 1
                 if dE < 0.0:
                     improves += 1
+                tt = 0
                 prevState = self.copy_state(self.state)
                 prevEnergy = E
                 if E < self.best_energy:
+                    reward = 0
                     self.best_state = self.copy_state(self.state)
                     self.best_energy = E
             if self.updates > 1:
@@ -216,7 +231,7 @@ if __name__ == '__main__':
     tsp.flow = flow
     tsp.copy_strategy = "method"
     tsp.TMax = 350000
-    tsp.Tmin = 1
+    tsp.Tmin = 10
     tsp.steps = 2400
     # tsp.updates = 25
     #test bwcalculate
