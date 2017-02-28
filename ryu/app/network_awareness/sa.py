@@ -47,8 +47,7 @@ class recalculatebySA(Annealer):
             
             T = self.Tmax * math.exp(Tfactor * step / self.steps) * self.Tmin / self.Tmax#* (self.steps - step + 1) / self.steps#
             if tt != 0:
-                 T = min (self.Tmax,T * (self.upk**tt))
-            perT = T
+                T = min(self.Tmax , T * (self.upk**tt))
             self.move()
             E = self.energy()
             dE = E - prevEnergy
@@ -66,7 +65,7 @@ class recalculatebySA(Annealer):
                 accepts += 1
                 if dE < 0.0:
                     improves += 1
-                
+                tt = 0
                 prevState = self.copy_state(self.state)
                 prevEnergy = E
                 if E < self.best_energy:
