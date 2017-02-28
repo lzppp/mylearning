@@ -228,16 +228,16 @@ class ShortestForwarding(app_manager.RyuApp):
                 print self.awareness.graph[1][2]['bw']
                 self.qoe()
                 hub.sleep(10)
-            if self.awareness.graph[src][dst]['delay']!= None:
-                for src in self.awareness.graph:
-                    if breakflag == True:
-                        break
-                    for dst in self.awareness.graph[src]:
-                        if delay == self.awareness.graph[src][dst]['delay'] > 0.5:
-                            breakflag = True
-                            break
+            
+            for src in self.awareness.graph:
                 if breakflag == True:
-                    self.qoe()
+                    break
+                for dst in self.awareness.graph[src]:
+                    if delay == self.awareness.graph[src][dst]['delay'] > 0.5:
+                        breakflag = True
+                        break
+            if breakflag == True:
+                self.qoe()
 
 
             hub.sleep(setting.DELAY_DETECTING_PERIOD)
