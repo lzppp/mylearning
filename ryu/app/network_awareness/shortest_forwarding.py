@@ -192,7 +192,7 @@ class ShortestForwarding(app_manager.RyuApp):
             safunction.copy_strategy = "method"
             print ("----------------------------start sa-------------------------------")
             safunction.TMax = 350000
-            safunction.Tmin = 1
+            safunction.Tmin = 100
             safunction.steps = 2400
             state , e = safunction.anneal()
             for key in state.keys():
