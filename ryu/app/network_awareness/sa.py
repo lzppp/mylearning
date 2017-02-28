@@ -46,8 +46,8 @@ class recalculatebySA(Annealer):
             step += 1
             
             T = self.Tmax * math.exp(Tfactor * step / self.steps) * self.Tmin / self.Tmax#* (self.steps - step + 1) / self.steps#
-            if tt != 0:
-                T = min(self.Tmax , T * (self.upk**tt))
+            # if tt != 0:
+            #     T = min(self.Tmax , T * (self.upk**tt))
             self.move()
             E = self.energy()
             dE = E - prevEnergy
