@@ -47,7 +47,7 @@ class recalculatebySA(Annealer):
             
             T = self.Tmax * math.exp(Tfactor * step / self.steps) * self.Tmin / self.Tmax#* (self.steps - step + 1) / self.steps#
             if tt != 0:
-                 T = T * (self.upk**tt)
+                 T = min (self.Tmax,T * (self.upk**tt))
             perT = T
             self.move()
             E = self.energy()
