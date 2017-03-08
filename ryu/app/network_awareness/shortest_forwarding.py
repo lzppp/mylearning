@@ -104,7 +104,8 @@ class ShortestForwarding(app_manager.RyuApp):
         self.busy = False
         self.doing_list = set()
         self.flow_infome = {}
-
+        self.dotime = 0
+        self.fltime = 0
         sql.drop_table(self.conn , 'switch')
         sql.create_table(self.conn , TABLESWITCH)
         sql.drop_table(self.conn , 'flow')
@@ -195,17 +196,20 @@ class ShortestForwarding(app_manager.RyuApp):
             safunction.Tmin = 100
             safunction.steps = 2400
             state , e = safunction.anneal()
-            for key in state.keys():
-                if state[key] != self.flow_infome[key]['path']:
-                    #resend flow table
-                    self.logger.info("[PATH]%s<-->%s: %s" % (key[0], key[1], state[key]))
-                    self.flow_infome[key]['path'] = state[key]
-                    flow_info = (self.flow_infome[key]['eth_type'],
-                                 key[0], key[1], self.flow_infome[key]['in_port'])
-                    self.install_flow(self.datapaths,
-                                      self.awareness.link_to_port,
-                                      self.awareness.access_table, state[key],
-                                      flow_info, self.flow_infome[key]['buffer_id'], None)
+            if e > 50000:
+                self.fltime = self.fltime + 1
+            else :
+                for key in state.keys():
+                    if state[key] != self.flow_infome[key]['path']:
+                        #resend flow table
+                        self.logger.info("[PATH]%s<-->%s: %s" % (key[0], key[1], state[key]))
+                        self.flow_infome[key]['path'] = state[key]
+                        flow_info = (self.flow_infome[key]['eth_type'],
+                                     key[0], key[1], self.flow_infome[key]['in_port'])
+                        self.install_flow(self.datapaths,
+                                          self.awareness.link_to_port,
+                                          self.awareness.access_table, state[key],
+                                          flow_info, self.flow_infome[key]['buffer_id'], None)
 
 
         
@@ -216,6 +220,7 @@ class ShortestForwarding(app_manager.RyuApp):
         """
         
         while self.busy != True:
+            print ("flrate = %d/%d" % (self.fltime , self.dotime))
             breakflag = False
             fetchall_sql = '''SELECT * FROM flow'''
             result = sql.fetchall(self.flowconn , fetchall_sql)
@@ -224,8 +229,7 @@ class ShortestForwarding(app_manager.RyuApp):
             else:
                 self.busy = True
                 flow_in_road = copy.deepcopy(self.monitor.flow_in_road)
-                print flow_in_road
-                print self.awareness.graph[1][2]['bw']
+                self.dotime = self.dotime + 1
                 self.qoe()
                 hub.sleep(10)
             
